@@ -17,7 +17,8 @@ install-controller-gen:
 generate-crds:
 	controller-gen crd:allowDangerousTypes=true,generateEmbeddedObjectMeta=true \
 			object:headerFile="$(hacks.dir)/boilerplate.generatego.txt",year=2025 paths="{./...}" \
-            output:crd:artifacts:config=charts/gateway-extension/crds
+            output:crd:artifacts:config=charts/gateway-extension/crds; \
+    goimports -w .
 
 .PHONY: build
 build: clean
