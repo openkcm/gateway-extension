@@ -1,0 +1,53 @@
+application:
+  name: gateway-extension
+  environment: development
+
+listener:
+  type: "unix" # one of: tcp, unix
+  tcp:
+    address: ":9092"
+  unix:
+    socketPath: "extension.sock"
+
+grpcClientAttributes:
+  keepaliveTimeSec: 1
+  keepaliveTimeoutSec: 1
+
+status:
+  enabled: true
+  address: ":8888"
+  profiling: true
+
+logger:
+  level: info # one of: debug, info, warn, error
+  # Format of the logs
+  format: json # one of: json, text
+  formatter:
+    time:
+      type: unix # one of: pattern, unix
+      # Used only when the property type: pattern
+      # Should follow golang time pattern
+      # Default value time.RFC3339.
+      pattern: "Mon Jan 02 15:04:05 -0700 2006"
+      # Used only when the property type: unix
+      # Time units are "1ns", "1us" (or "1µs"), "1ms", "1s"
+      # Default value 1s.
+      precision: 1us
+    fields:
+      # Field names (this way the field name can be changed) to be used on log records; These are their defaults.
+      error: "error"
+      message: "msg"
+      level: "level"
+      time: "time"
+      # Fields names used by OTEL to track the Trace and Span ID
+      otel:
+        traceId: "traceId" # Default is TraceID
+        spanId: "spanId" # Default is SpanID
+      masking:
+        # All fields under PII, the formatters will mask the value and keeping first 4 original characters
+        pii:
+          - email
+          - ip-address
+        # All fields under other, the formatters will mask the value, using given mask.
+        other:
+          jwt-token: "*****"

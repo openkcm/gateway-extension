@@ -1,0 +1,49 @@
+{
+  "kind": "JWTProvider",
+  "apiVersion": "gateway.extensions.envoyproxy.io/v1alpha1",
+  "spec": {
+    "targetRefs": [
+      {
+        "group": "",
+        "kind": "",
+        "name": ""
+      }
+    ],
+    "name": "Well Known",
+    "issuer": "http://localhost:4543",
+    "audiences": [
+      "one",
+      "two"
+    ],
+    "requireExpiration": false,
+    "recomputeRoute": false,
+    "fromHeaders": [
+      {
+        "name": "X-Custom-Header",
+        "valuePrefix": "prefix"
+      }
+    ],
+    "claimToHeaders": [
+      {
+        "headerName": "X-Custom-Header",
+        "claimName": "claim"
+      }
+    ],
+    "extractFrom": {
+      "headers": [
+        {
+          "name": "X-Custom-Header",
+          "valuePrefix": "prefix"
+        }
+      ],
+      "cookie": [
+        "Cookie one",
+        "Cookie two"
+      ],
+      "params": [
+        "Param one",
+        "Param two"
+      ]
+    }
+  }
+}

@@ -1,0 +1,14 @@
+version: 3
+
+includes:
+  shared:
+    taskfile: hack/common/Taskfile_service.yaml
+    flatten: true
+    excludes: [] # put task names in here which are overwritten in this file
+    vars:
+      NESTED_MODULES: api
+      CODE_DIRS: '{{.ROOT_DIR}}/... {{.ROOT_DIR}}/api/... {{.ROOT_DIR}}/cmd/... {{.ROOT_DIR}}/internal/... {{.ROOT_DIR}}/test/...'
+      COMPONENTS: 'gateway-extension'
+      REPO_URL: 'https://github.com/openmkcm/gateway-extension'
+      GENERATE_DOCS_INDEX: "true"
+

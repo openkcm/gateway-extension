@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "gateway-extension.name" . }}-config
+  namespace: {{ include "gateway-extension.namespace" . }}
+  labels:
+    {{- include "gateway-extension.labels" . | nindent 4 }}
+immutable: {{ .Values.config.isImmutable | default false }}
+data:
+  config.yaml: |-
+    application:
+      name: {{ .Chart.Name }}
+    {{- with .Values.config }}
+      environment: {{ .environment }}
+      {{- with .labels }}
+      labels:
+        {{- toYaml . | nindent 8 }}
+      {{- end}}
+
+    listener:
+      {{- toYaml .listener | nindent 6 }}
+
+    logger:
+      {{- toYaml .logger | nindent 6 }}
+
+    status:
+      {{- toYaml .status | nindent 6 }}
+
+    {{- end }}
+
+
