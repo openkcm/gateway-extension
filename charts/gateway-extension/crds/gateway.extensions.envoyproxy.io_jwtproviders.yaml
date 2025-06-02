@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.13.0
+    controller-gen.kubebuilder.io/version: v0.18.0
   name: jwtproviders.gateway.extensions.envoyproxy.io
 spec:
   group: gateway.extensions.envoyproxy.io
@@ -20,14 +20,19 @@ spec:
         description: JWTProvider provides an example extension policy context resource.
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
             type: string
           metadata:
             type: object
@@ -36,32 +41,34 @@ spec:
               verified.
             properties:
               audiences:
-                description: Audiences is a list of JWT audiences allowed access.
-                  For additional details, see https://tools.ietf.org/html/rfc7519#section-4.1.3.
-                  If not provided, JWT audiences are not checked.
+                description: |-
+                  Audiences is a list of JWT audiences allowed access. For additional details, see
+                  https://tools.ietf.org/html/rfc7519#section-4.1.3. If not provided, JWT audiences
+                  are not checked.
                 items:
                   type: string
                 maxItems: 8
                 type: array
               claimToHeaders:
-                description: 'Add JWT claim to HTTP JWTHeader Specify the claim name
-                  you want to copy in which HTTP header. For examples, following config:
-                  The claim must be of type; string, int, double, bool. Array type
-                  claims are not supported'
+                description: |-
+                  Add JWT claim to HTTP JWTHeader
+                  Specify the claim name you want to copy in which HTTP header. For examples, following config:
+                  The claim must be of type; string, int, double, bool. Array type claims are not supported
                 items:
                   description: JWTClaimToHeader  This message specifies a combination
                     of header name and claim name.
                   properties:
                     claimName:
-                      description: 'The field name for the JWT Claim : it can be a
-                        nested claim of type (eg. "claim.nested.key", "sub") String
-                        separated with "." in case of nested claims. The nested claim
-                        name must use dot "." to separate the JSON name path.'
+                      description: |-
+                        The field name for the JWT Claim : it can be a nested claim of type (eg. "claim.nested.key", "sub")
+                        String separated with "." in case of nested claims. The nested claim name must use dot "." to separate
+                        the JSON name path.
                       minLength: 1
                       type: string
                     headerName:
-                      description: The HTTP header name to copy the claim to. The
-                        header name will be sanitized and replaced.
+                      description: |-
+                        The HTTP header name to copy the claim to.
+                        The header name will be sanitized and replaced.
                       minLength: 1
                       type: string
                   required:
@@ -70,10 +77,10 @@ spec:
                   type: object
                 type: array
               extractFrom:
-                description: ExtractFrom defines different ways to extract the JWT
-                  token from HTTP request. If empty, it defaults to extract JWT token
-                  from the Authorization HTTP request header using Bearer schema or
-                  access_token from query parameters.
+                description: |-
+                  ExtractFrom defines different ways to extract the JWT token from HTTP request.
+                  If empty, it defaults to extract JWT token from the Authorization HTTP request header using Bearer schema
+                  or access_token from query parameters.
                 properties:
                   cookies:
                     description: Cookies represents a list of cookie names to extract
@@ -91,11 +98,10 @@ spec:
                             token
                           type: string
                         valuePrefix:
-                          description: 'ValuePrefix is the prefix that should be stripped
-                            before extracting the token. The format would be used
-                            by Envoy like "{ValuePrefix}<TOKEN>". For example, "Authorization:
-                            Bearer <TOKEN>", then the ValuePrefix="Bearer " with a
-                            space at the end.'
+                          description: |-
+                            ValuePrefix is the prefix that should be stripped before extracting the token.
+                            The format would be used by Envoy like "{ValuePrefix}<TOKEN>".
+                            For example, "Authorization: Bearer <TOKEN>", then the ValuePrefix="Bearer " with a space at the end.
                           type: string
                       required:
                       - name
@@ -110,60 +116,59 @@ spec:
                 type: object
               fromHeaders:
                 description: "Two fields below define where to extract the JWT from
-                  an HTTP request. \n If no explicit location is specified, the following
-                  default locations are tried in order: \n 1. The Authorization header
-                  using the `Bearer schema <https://tools.ietf.org/html/rfc6750#section-2.1>`_.
-                  Example:: \n Authorization: Bearer <token>. \n 2. `access_token
-                  <https://tools.ietf.org/html/rfc6750#section-2.3>`_ query parameter.
-                  \n Multiple JWTs can be verified for a request. Each JWT has to
-                  be extracted from the locations its provider specified or from the
-                  default locations."
+                  an HTTP request.\n\nIf no explicit location is specified, the following
+                  default locations are tried in order:\n\n1. The Authorization header
+                  using the `Bearer schema\n<https://tools.ietf.org/html/rfc6750#section-2.1>`_.
+                  Example::\n\n\tAuthorization: Bearer <token>.\n\n2. `access_token
+                  <https://tools.ietf.org/html/rfc6750#section-2.3>`_ query parameter.\n\nMultiple
+                  JWTs can be verified for a request. Each JWT has to be extracted
+                  from the locations\nits provider specified or from the default locations."
                 items:
                   properties:
                     name:
                       description: Name is the HTTP header name to retrieve the token
                       type: string
                     valuePrefix:
-                      description: 'ValuePrefix is the prefix that should be stripped
-                        before extracting the token. The format would be used by Envoy
-                        like "{ValuePrefix}<TOKEN>". For example, "Authorization:
-                        Bearer <TOKEN>", then the ValuePrefix="Bearer " with a space
-                        at the end.'
+                      description: |-
+                        ValuePrefix is the prefix that should be stripped before extracting the token.
+                        The format would be used by Envoy like "{ValuePrefix}<TOKEN>".
+                        For example, "Authorization: Bearer <TOKEN>", then the ValuePrefix="Bearer " with a space at the end.
                       type: string
                   required:
                   - name
                   type: object
                 type: array
               issuer:
-                description: Issuer is the principal that issued the JWT and takes
-                  the form of a URL or email address. For additional details, see
-                  https://tools.ietf.org/html/rfc7519#section-4.1.1 for URL format
-                  and https://rfc-editor.org/rfc/rfc5322.html for email format. If
-                  not provided, the JWT issuer is not checked.
+                description: |-
+                  Issuer is the principal that issued the JWT and takes the form of a URL or email address.
+                  For additional details, see https://tools.ietf.org/html/rfc7519#section-4.1.1 for
+                  URL format and https://rfc-editor.org/rfc/rfc5322.html for email format. If not provided,
+                  the JWT issuer is not checked.
                 maxLength: 2048
                 type: string
               name:
-                description: Name defines a unique name for the JWT provider. A name
-                  can have a variety of forms, including RFC1123 subdomains, RFC 1123
-                  labels, or RFC 1035 labels.
+                description: |-
+                  Name defines a unique name for the JWT provider. A name can have a variety of forms,
+                  including RFC1123 subdomains, RFC 1123 labels, or RFC 1035 labels.
                 maxLength: 1024
                 minLength: 1
                 type: string
               recomputeRoute:
-                description: RecomputeRoute clears the route cache and recalculates
-                  the routing decision. This field must be enabled if the headers
-                  generated from the claim are used for route matching decisions.
-                  If the recomputation selects a new route, features targeting the
-                  new matched route will be applied.
+                description: |-
+                  RecomputeRoute clears the route cache and recalculates the routing decision.
+                  This field must be enabled if the headers generated from the claim are used for
+                  route matching decisions. If the recomputation selects a new route, features targeting
+                  the new matched route will be applied.
                 type: boolean
               remoteJwks:
-                description: JWKS can be fetched from remote server via HTTP/HTTPS.
-                  This field specifies the remote HTTP URI and how the fetched JWKS
-                  should be cached.
+                description: |-
+                  JWKS can be fetched from remote server via HTTP/HTTPS. This field specifies the remote HTTP
+                  URI and how the fetched JWKS should be cached.
                 properties:
                   cacheDuration:
-                    description: Duration after which the cached JWKS should be expired.
-                      If not specified, default cache duration is 10 minutes.
+                    description: |-
+                      Duration after which the cached JWKS should be expired. If not specified, default cache
+                      duration is 10 minutes.
                     format: int64
                     type: integer
                   retry:
@@ -199,10 +204,9 @@ spec:
                     format: int64
                     type: integer
                   uri:
-                    description: URI is the HTTPS URI to fetch the JWKS. Envoy's system
-                      trust bundle is used to validate the server certificate. If
-                      a custom trust bundle is needed, it can be specified in a BackendTLSConfig
-                      resource and target the BackendRefs.
+                    description: |-
+                      URI is the HTTPS URI to fetch the JWKS. Envoy's system trust bundle is used to validate the server certificate.
+                      If a custom trust bundle is needed, it can be specified in a BackendTLSConfig resource and target the BackendRefs.
                     maxLength: 2048
                     minLength: 1
                     type: string
@@ -210,26 +214,28 @@ spec:
                 - uri
                 type: object
               requireExpiration:
-                description: Requires that the credential contains an `expiration
-                  <https://tools.ietf.org/html/rfc7519#section-4.1.4>`_. For instance,
-                  this could implement JWT-SVID `expiration restrictions <https://github.com/spiffe/spiffe/blob/main/standards/JWT-SVID.md#33-expiration-time>`_.
-                  Unlike “max_lifetime“, this only requires that expiration is present,
-                  where “max_lifetime“ also checks the value.
+                description: |-
+                  Requires that the credential contains an `expiration <https://tools.ietf.org/html/rfc7519#section-4.1.4>`_.
+                  For instance, this could implement JWT-SVID
+                  `expiration restrictions <https://github.com/spiffe/spiffe/blob/main/standards/JWT-SVID.md#33-expiration-time>`_.
+                  Unlike “max_lifetime“, this only requires that expiration is present, where “max_lifetime“ also checks the value.
                 type: boolean
               targetRefs:
                 items:
-                  description: "LocalObjectReference identifies an API object within
-                    the namespace of the referrer. The API object must be valid in
-                    the cluster; the Group and Kind must be registered in the cluster
-                    for this reference to be valid. \n References to objects with
-                    invalid Group and Kind are not valid, and must be rejected by
-                    the implementation, with appropriate Conditions set on the containing
-                    object."
+                  description: |-
+                    LocalObjectReference identifies an API object within the namespace of the
+                    referrer.
+                    The API object must be valid in the cluster; the Group and Kind must
+                    be registered in the cluster for this reference to be valid.
+
+                    References to objects with invalid Group and Kind are not valid, and must
+                    be rejected by the implementation, with appropriate Conditions set
+                    on the containing object.
                   properties:
                     group:
-                      description: Group is the group of the referent. For example,
-                        "gateway.networking.k8s.io". When unspecified or empty string,
-                        core API group is inferred.
+                      description: |-
+                        Group is the group of the referent. For example, "gateway.networking.k8s.io".
+                        When unspecified or empty string, core API group is inferred.
                       maxLength: 253
                       pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
                       type: string
