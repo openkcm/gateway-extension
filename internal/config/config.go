@@ -3,6 +3,8 @@
 package config
 
 import (
+	"time"
+
 	"github.com/openkcm/common-sdk/pkg/commoncfg"
 )
 
@@ -21,14 +23,15 @@ type Config struct {
 }
 
 type Listener struct {
-	Type ListenerType `yaml:"type"`
-	TCP  *TCP         `yaml:"tcp"`
-	UNIX *UNIX        `yaml:"unix"`
+	Type            ListenerType  `yaml:"type" default:"tcp"`
+	TCP             *TCP          `yaml:"tcp"`
+	UNIX            *UNIX         `yaml:"unix"`
+	ShutdownTimeout time.Duration `yaml:"shutdownTimeout" default:"5s"`
 }
 
 type TCP struct {
 	// TCP.Address is the address to listen on for gRPC requests
-	Address string `yaml:"address"`
+	Address string `yaml:"address" default:":9092"`
 }
 
 type UNIX struct {

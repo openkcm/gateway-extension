@@ -66,7 +66,7 @@ func StartGRPCServer(ctx context.Context, cfg *config.Config) error {
 
 	<-ctx.Done()
 
-	shutdownCtx, shutdownRelease := context.WithTimeout(context.Background(), Five)
+	shutdownCtx, shutdownRelease := context.WithTimeout(ctx, cfg.Listener.ShutdownTimeout)
 	defer shutdownRelease()
 
 	grpcServer.Stop()

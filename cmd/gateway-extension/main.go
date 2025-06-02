@@ -20,6 +20,8 @@ import (
 	root "github.com/openkcm/gateway-extension"
 	"github.com/openkcm/gateway-extension/internal/business"
 	"github.com/openkcm/gateway-extension/internal/config"
+
+	"github.com/mcuadros/go-defaults"
 )
 
 var versionFlag = flag.Bool("version", false, "print version information")
@@ -33,11 +35,11 @@ var gracefulShutdownMessage = flag.String("graceful-shutdown-message", "Graceful
 //   - Start the business logic and eventually return the error from it
 func run(ctx context.Context) error {
 	// Load Configuration
-	defaults := map[string]interface{}{}
+	defaultValues := map[string]interface{}{}
 	cfg := &config.Config{}
 
 	err := commoncfg.LoadConfig[*config.Config](cfg,
-		defaults,
+		defaultValues,
 		"/etc/gateway-extension",
 		"$HOME/.gateway-extension",
 		".",
@@ -46,6 +48,7 @@ func run(ctx context.Context) error {
 		return oops.In("main").
 			Wrapf(err, "Failed to load the configuration")
 	}
+	defaults.SetDefaults(cfg)
 
 	err = commoncfg.UpdateConfigVersion(&cfg.BaseConfig, root.BuildVersion)
 	if err != nil {

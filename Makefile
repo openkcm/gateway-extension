@@ -38,6 +38,10 @@ vet:
 lint:
 	golangci-lint run ./...
 
+.PHONY: lint-fix
+lint-fix:
+	golangci-lint run --fix ./...
+
 .PHONY: clean
 clean:
 	rm -f cover.out cover.html $(NAME)
