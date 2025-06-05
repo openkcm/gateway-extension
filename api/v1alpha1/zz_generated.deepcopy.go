@@ -133,7 +133,7 @@ func (in *JWTProviderList) DeepCopyInto(out *JWTProviderList) {
 	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
-		*out = make([]JWTProviderSpec, len(*in))
+		*out = make([]JWTProvider, len(*in))
 		for i := range *in {
 			(*in)[i].DeepCopyInto(&(*out)[i])
 		}
