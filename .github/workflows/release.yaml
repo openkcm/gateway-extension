@@ -156,7 +156,7 @@ jobs:
           tag_name: ${{ env.version }}
           name: Release ${{ env.version }}
           body: ${{steps.github_release.outputs.changelog}}
-          files: "*-app.bom.json"
+          files: "*-app.sbom.json"
           draft: true
           prerelease: false
         env:
@@ -166,8 +166,8 @@ jobs:
         if: ${{ env.SKIP != 'true' }}
         run: |
           echo "Removing the following SBOM files:"
-          ls -1 *-app.bom.json || echo "No files found"
-          rm -f *-app.bom.json
+          ls -1 *-app.sbom.json || echo "No files found"
+          rm -f *-app.sbom.json
           rm -rf bin/
 
       - name: Create pr for next version
