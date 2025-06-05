@@ -87,7 +87,7 @@ formatters:
       sections:
         - standard
         - default
-        - prefix(github.com/openkcm/checker)
+        - prefix(github.com/openkcm/gateway-extension)
         - blank
         - dot
         - alias
