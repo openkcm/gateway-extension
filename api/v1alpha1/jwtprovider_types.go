@@ -114,7 +114,7 @@ type JWTProviderList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 
-	Items []JWTProviderSpec `json:"items"`
+	Items []JWTProvider `json:"items"`
 }
 
 type JWTHeader struct {
