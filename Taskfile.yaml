@@ -10,6 +10,6 @@ includes:
       API_DIRS: '{{.ROOT_DIR}}/api/v1alpha1/...'
       CODE_DIRS: '{{.ROOT_DIR}}/cmd/... {{.ROOT_DIR}}/internal/... {{.ROOT_DIR}}/test/...'
       COMPONENTS: 'gateway-extension'
-      REPO_URL: 'https://github.com/openmkcm/gateway-extension'
+      REPO_URL: 'https://github.com/openkcm/gateway-extension'
       GENERATE_DOCS_INDEX: "false"
 
