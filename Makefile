@@ -3,11 +3,7 @@ NAME := gateway-extension
 IMGTAG ?= latest
 IMG ?= localhost/$(NAME):${IMGTAG}
 
-hacks.dir = hack
-
-$(tools.bindir)/%: $(tools.srcdir)/%/pin.go $(tools.srcdir)/%/go.mod
-	cd $(<D) && GOOS= GOARCH= go build -o $(abspath $@) $$(sed -En 's,^import _ "(.*)".*,\1,p' pin.go)
-
+tools.dir = tools
 
 .PHONY: install-controller-gen
 install-controller-gen:
@@ -16,7 +12,7 @@ install-controller-gen:
 .PHONY: generate-crds
 generate-crds:
 	controller-gen crd:allowDangerousTypes=true,generateEmbeddedObjectMeta=true \
-			object:headerFile="$(hacks.dir)/boilerplate.generatego.txt",year=2025 paths="{./...}" \
+			object:headerFile="$(tools.dir)/boilerplate.generatego.txt",year=2025 paths="{./...}" \
             output:crd:artifacts:config=charts/gateway-extension/crds; \
     goimports -w .
 
