@@ -1,0 +1,57 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "gateway-extension.name" . }}-jwt-provider-viewer
+  namespace: {{ include "gateway-extension.namespace" . }}
+rules:
+  - apiGroups:
+      - gateway.extensions.envoyproxy.io
+    resources:
+      - jwtproviders
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "gateway-extension.name" . }}-jwt-provider-viewer
+  namespace: {{ include "gateway-extension.namespace" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "gateway-extension.name" . }}-jwt-provider-viewer
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "gateway-extension.serviceAccountName" . }}
+    namespace: {{ include "gateway-extension.namespace" . }}
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "gateway-extension.name" . }}-jwt-provider-status-update
+  namespace: {{ include "gateway-extension.namespace" . }}
+rules:
+  - apiGroups:
+      - gateway.extensions.envoyproxy.io
+    resources:
+      - jwtproviders/status
+    verbs:
+      - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "gateway-extension.name" . }}-jwt-provider-status-update
+  namespace: {{ include "gateway-extension.namespace" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "gateway-extension.name" . }}-jwt-provider-status-update
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "gateway-extension.serviceAccountName" . }}
+    namespace: {{ include "gateway-extension.namespace" . }}
