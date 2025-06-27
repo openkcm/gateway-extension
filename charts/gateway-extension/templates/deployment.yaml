@@ -73,10 +73,10 @@ spec:
           args:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- with .Values.ports }}
           ports:
-            {{- with .Values.extraPorts }}
-              {{- toYaml . | nindent 12 }}
-            {{- end }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           env:
             - name: MY_POD_IP
               valueFrom:
@@ -98,8 +98,8 @@ spec:
           envFrom:
           {{- . | toYaml | nindent 12 }}
           {{- end }}
-          livenessProbe:
           {{- with .Values.livenessProbe }}
+          livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.readinessProbe }}

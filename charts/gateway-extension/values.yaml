@@ -29,7 +29,7 @@ image:
   #   registry: kms.common.repositories.cloud.sap
   #   repository: cmk
   # +docs:property
-  registry: kms.common.repositories.cloud.sap
+  registry: ghcr.io/openkcm
 
   # The container image
   # +docs:property
@@ -42,7 +42,7 @@ image:
 
   # Setting a digest will override any tag.
   # +docs:property
-  digest: sha256:b6cb41dde62895df8f4fd7f31f06425032d994178a84e4d73dcd3924b92f41b2
+  digest: sha256:c65465af0d457efa8ded89c6b552cad85496fa7c7988a593ccfc6df2be859324
 
   # Kubernetes imagePullPolicy.
   pullPolicy: IfNotPresent
@@ -57,8 +57,8 @@ image:
 
 
 # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-imagePullSecrets:
-    - name: "registry-access"
+imagePullSecrets: []
+#    - name: "registry-access"
 
 
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
@@ -136,17 +136,17 @@ service:
       name: http-grpc
 
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+resources:
+   limits:
+     cpu: 100m
+     memory: 128Mi
+   requests:
+     cpu: 100m
+     memory: 128Mi
 
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 livenessProbe:
@@ -168,7 +168,7 @@ readinessProbe:
 autoscaling:
   enabled: false
   minReplicas: 1
-  maxReplicas: 100
+  maxReplicas: 3
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80
 
