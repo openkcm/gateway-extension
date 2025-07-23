@@ -8,12 +8,12 @@ require (
 	github.com/envoyproxy/go-control-plane/envoy v1.32.5-0.20250408134212-157c26b62099
 	github.com/google/go-cmp v0.7.0
 	github.com/mcuadros/go-defaults v1.2.0
-  github.com/openkcm/common-sdk v0.6.0
+	github.com/openkcm/common-sdk v0.6.0
 	github.com/samber/oops v1.19.0
 	github.com/stretchr/testify v1.10.0
 	github.com/veqryn/slog-context v0.8.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.62.0
-	google.golang.org/grpc v1.73.0
+	google.golang.org/grpc v1.74.2
 	google.golang.org/protobuf v1.36.6
 	k8s.io/apimachinery v0.34.0-alpha.3
 	k8s.io/utils v0.0.0-20250604170112-4c0f3b243397
@@ -22,10 +22,10 @@ require (
 )
 
 require (
-	cel.dev/expr v0.23.0 // indirect
+	cel.dev/expr v0.24.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
-	github.com/cncf/xds/go v0.0.0-20250326154945-ae57f3c0d45f // indirect
+	github.com/cncf/xds/go v0.0.0-20250501225837-2ac532fd4443 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/davidhoo/jsonpath v1.0.4 // indirect
 	github.com/envoyproxy/protoc-gen-validate v1.2.1 // indirect
