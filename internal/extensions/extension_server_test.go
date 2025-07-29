@@ -406,13 +406,15 @@ func TestGatewayExtension_PostHTTPListenerModify_WellKnown(t *testing.T) {
 func TestGatewayExtension_PostTranslateModify(t *testing.T) {
 	tests := []struct {
 		name            string
+		features        *commoncfg.FeatureGates
 		jwtAuthClusters map[string]*urlCluster
 		req             *extension.PostTranslateModifyRequest
 		want            *extension.PostTranslateModifyResponse
 		wantErr         assert.ErrorAssertionFunc
 	}{
 		{
-			name: "Post Translate Modify",
+			name:     "Post Translate Modify",
+			features: &commoncfg.FeatureGates{},
 			jwtAuthClusters: map[string]*urlCluster{
 				"example_com_443": {
 					name:         "example_com_443",
@@ -515,7 +517,10 @@ func TestGatewayExtension_PostTranslateModify(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := &GatewayExtension{jwtAuthClusters: maps.Clone(tt.jwtAuthClusters)}
+			s := &GatewayExtension{
+				features:        tt.features,
+				jwtAuthClusters: maps.Clone(tt.jwtAuthClusters),
+			}
 
 			got, err := s.PostTranslateModify(t.Context(), tt.req)
 			if !tt.wantErr(t, err, fmt.Sprintf("PostTranslateModify(%v)", tt.req)) {
