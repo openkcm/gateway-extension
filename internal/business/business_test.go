@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/openkcm/common-sdk/pkg/commoncfg"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/openkcm/gateway-extension/internal/config"
@@ -22,7 +23,7 @@ func TestMainFunc(t *testing.T) {
 			cfg: &config.Config{
 				Listener: config.Listener{
 					Type: config.TCPListener,
-					TCP:  &config.TCP{Address: ":0"},
+					TCP:  commoncfg.GRPCServer{Address: ":0"},
 				},
 			},
 			wantErr: assert.NoError,
