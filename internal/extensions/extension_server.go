@@ -9,13 +9,14 @@ import (
 	"context"
 	"encoding/json"
 
-	pb "github.com/envoyproxy/gateway/proto/extension"
 	"github.com/openkcm/common-sdk/pkg/commoncfg"
-	"github.com/openkcm/gateway-extension/internal/flags"
+
+	pb "github.com/envoyproxy/gateway/proto/extension"
 	slogctx "github.com/veqryn/slog-context"
 
 	"github.com/openkcm/gateway-extension/api"
 	gev1a1 "github.com/openkcm/gateway-extension/api/v1alpha1"
+	"github.com/openkcm/gateway-extension/internal/flags"
 )
 
 type GatewayExtension struct {
@@ -55,9 +56,11 @@ func (s *GatewayExtension) PostHTTPListenerModify(ctx context.Context, req *pb.P
 	}
 
 	resources := make(map[string][]any)
+
 	for _, ext := range req.GetPostListenerContext().GetExtensionResources() {
 		var generic api.Generic
-		if err := json.Unmarshal(ext.GetUnstructuredBytes(), &generic); err != nil {
+		err := json.Unmarshal(ext.GetUnstructuredBytes(), &generic)
+		if err != nil {
 			slogctx.Error(ctx, "Failed to unmarshal the extension", "error", err)
 			continue
 		}
@@ -68,19 +71,24 @@ func (s *GatewayExtension) PostHTTPListenerModify(ctx context.Context, req *pb.P
 			if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
 				continue
 			}
+
 			switch generic.APIVersion {
 			case api.JWTProviderV1Alpha1:
 				{
 					slogctx.Info(ctx, "Found a resource", "yaml", generic)
+
 					jwtProvider := &gev1a1.JWTProvider{}
-					if err := json.Unmarshal(ext.GetUnstructuredBytes(), jwtProvider); err != nil {
+					err := json.Unmarshal(ext.GetUnstructuredBytes(), jwtProvider)
+					if err != nil {
 						slogctx.Error(ctx, "Failed to unmarshal the v1alpha1.JWTProvider CRD", "error", err)
 						continue
 					}
+
 					_, ok := resources[api.JWTProviderKind]
 					if !ok {
 						resources[api.JWTProviderKind] = make([]any, 0)
 					}
+
 					resources[api.JWTProviderKind] = append(resources[api.JWTProviderKind], jwtProvider)
 				}
 			}
@@ -103,6 +111,7 @@ func (s *GatewayExtension) PostHTTPListenerModify(ctx context.Context, req *pb.P
 	}
 
 	slogctx.Info(ctx, "Called successfully.")
+
 	return resp, nil
 }
 
@@ -131,6 +140,7 @@ func (s *GatewayExtension) PostTranslateModify(ctx context.Context, req *pb.Post
 	}
 
 	slogctx.Info(ctx, "Called successfully.")
+
 	return &pb.PostTranslateModifyResponse{
 		Clusters: clusters,
 		Secrets:  req.GetSecrets(),
@@ -166,5 +176,6 @@ func (s *GatewayExtension) PostVirtualHostModify(ctx context.Context, req *pb.Po
 	}
 
 	slogctx.Info(ctx, "Called successfully.")
+
 	return resp, nil
 }

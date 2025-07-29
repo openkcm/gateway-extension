@@ -67,12 +67,14 @@ func TestStartGRPCServer(t *testing.T) {
 			defer cancel()
 
 			errCh := make(chan error)
+
 			go func() {
 				errCh <- StartGRPCServer(ctx, tt.cfg)
 			}()
 
 			time.Sleep(1 * time.Second)
 			cancel()
+
 			err := <-errCh
 			tt.wantErr(t, err, fmt.Sprintf("StartGRPCServer(ctx, %v)", tt.cfg))
 		})

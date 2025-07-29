@@ -14,11 +14,14 @@ func findHCM(filterChain *listenerv3.FilterChain) (*hcm.HttpConnectionManager, i
 	for filterIndex, filter := range filterChain.GetFilters() {
 		if filter.GetName() == wellknown.HTTPConnectionManager {
 			h := new(hcm.HttpConnectionManager)
-			if err := filter.GetTypedConfig().UnmarshalTo(h); err != nil {
+			err := filter.GetTypedConfig().UnmarshalTo(h)
+			if err != nil {
 				return nil, -1, err
 			}
+
 			return h, filterIndex, nil
 		}
 	}
+
 	return nil, -1, fmt.Errorf("unable to find HTTPConnectionManager in FilterChain: %s", filterChain.GetName())
 }

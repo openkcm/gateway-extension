@@ -14,6 +14,7 @@ import (
 func (s *GatewayExtension) VirtualHostModifyRoutes(ctx context.Context, routes []*routev3.Route) error {
 	for _, r := range routes {
 		slogctx.Info(ctx, "Updated VirtualHost Route", "name", r.GetName())
+
 		filterCfg := r.GetTypedPerFilterConfig()
 		if _, ok := filterCfg[egv1a1.EnvoyFilterJWTAuthn.String()]; !ok {
 			routeCfgProto := &jwtauthnv3.PerRouteConfig{
@@ -32,5 +33,6 @@ func (s *GatewayExtension) VirtualHostModifyRoutes(ctx context.Context, routes [
 			r.TypedPerFilterConfig[egv1a1.EnvoyFilterJWTAuthn.String()] = routeCfgAny
 		}
 	}
+
 	return nil
 }

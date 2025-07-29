@@ -200,16 +200,19 @@ func TestGatewayExtension_PostHTTPListenerModify(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := NewGatewayExtension(tt.features)
 			req := proto.CloneOf(tt.req)
+
 			got, err := s.PostHTTPListenerModify(t.Context(), req)
 			if !tt.wantErr(t, err, fmt.Sprintf("PostHTTPListenerModify(%v)", req)) {
 				return
 			}
+
 			diff := cmp.Diff(tt.want, got, protocmp.Transform(), protocmp.IgnoreDefaultScalars())
 			if diff != "" {
 				assert.Fail(t, fmt.Sprintf("Not equal: \n"+
 					"expected: %s\n"+
 					"actual  : %s%s", tt.want, got, diff), "PostHTTPListenerModify(%v)", req)
 			}
+
 			if len(s.jwtAuthClusters) == 0 {
 				assert.Fail(t, "No jwt auth clusters processed")
 			}
@@ -218,12 +221,13 @@ func TestGatewayExtension_PostHTTPListenerModify(t *testing.T) {
 }
 
 func startWellKnownServer() {
-	if err := http.ListenAndServe(":4543", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	err := http.ListenAndServe(":4543", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
 		if _, err := w.Write(testdata.OpenIDConfigurationJSON); err != nil {
 			panic(err)
 		}
-	})); err != nil {
+	}))
+	if err != nil {
 		panic(err)
 	}
 }
@@ -379,16 +383,19 @@ func TestGatewayExtension_PostHTTPListenerModify_WellKnown(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := NewGatewayExtension(tt.features)
 			req := proto.CloneOf(tt.req)
+
 			got, err := s.PostHTTPListenerModify(t.Context(), req)
 			if !tt.wantErr(t, err, fmt.Sprintf("PostHTTPListenerModify(%v)", req)) {
 				return
 			}
+
 			diff := cmp.Diff(tt.want, got, protocmp.Transform(), protocmp.IgnoreDefaultScalars())
 			if diff != "" {
 				assert.Fail(t, fmt.Sprintf("Not equal: \n"+
 					"expected: %s\n"+
 					"actual  : %s%s", tt.want, got, diff), "PostHTTPListenerModify(%v)", req)
 			}
+
 			if len(s.jwtAuthClusters) == 0 {
 				assert.Fail(t, "No jwt auth clusters processed")
 			}
@@ -509,16 +516,19 @@ func TestGatewayExtension_PostTranslateModify(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := &GatewayExtension{jwtAuthClusters: maps.Clone(tt.jwtAuthClusters)}
+
 			got, err := s.PostTranslateModify(t.Context(), tt.req)
 			if !tt.wantErr(t, err, fmt.Sprintf("PostTranslateModify(%v)", tt.req)) {
 				return
 			}
+
 			diff := cmp.Diff(tt.want, got, protocmp.Transform(), protocmp.IgnoreDefaultScalars())
 			if diff != "" {
 				assert.Fail(t, fmt.Sprintf("Not equal: \n"+
 					"expected: %s\n"+
 					"actual  : %s%s", tt.want, got, diff), "PostTranslateModify(%v)", tt.req)
 			}
+
 			if len(s.jwtAuthClusters) >= len(tt.jwtAuthClusters) {
 				assert.Fail(t, "Expected read jwtAuthClusters")
 			}
@@ -589,10 +599,12 @@ func TestGatewayExtension_PostVirtualHostModify(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := NewGatewayExtension(tt.features)
+
 			got, err := s.PostVirtualHostModify(t.Context(), tt.req)
 			if !tt.wantErr(t, err, fmt.Sprintf("PostVirtualHostModify(ctx, %v)", tt.req)) {
 				return
 			}
+
 			diff := cmp.Diff(tt.want, got, protocmp.Transform(), protocmp.IgnoreDefaultScalars())
 			if diff != "" {
 				assert.Fail(t, fmt.Sprintf("Not equal: \n"+

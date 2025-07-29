@@ -9,9 +9,10 @@ import (
 	"github.com/samber/oops"
 
 	pb "github.com/envoyproxy/gateway/proto/extension"
+	slogctx "github.com/veqryn/slog-context"
+
 	"github.com/openkcm/gateway-extension/internal/config"
 	"github.com/openkcm/gateway-extension/internal/extensions"
-	slogctx "github.com/veqryn/slog-context"
 )
 
 // StartGRPCServer starts the gRPC server using the given config.
@@ -36,7 +37,6 @@ func StartGRPCServer(ctx context.Context, cfg *config.Config) error {
 		slogctx.Info(ctx, "Starting gRPC GatewayExtension", "address", listener.Addr().String())
 
 		err = grpcServer.Serve(listener)
-
 		if err != nil {
 			slogctx.Error(ctx, "ErrorField serving gRPC endpoint", "error", err)
 		}

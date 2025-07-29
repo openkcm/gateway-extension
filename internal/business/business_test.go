@@ -35,12 +35,14 @@ func TestMainFunc(t *testing.T) {
 			defer cancel()
 
 			errCh := make(chan error)
+
 			go func() {
 				errCh <- Main(ctx, tt.cfg)
 			}()
 
 			time.Sleep(1 * time.Second)
 			cancel()
+
 			err := <-errCh
 			tt.wantErr(t, err, fmt.Sprintf("StartGRPCServer(ctx, %v)", tt.cfg))
 		})
