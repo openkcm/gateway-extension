@@ -4,44 +4,24 @@ import (
 	"context"
 	"net"
 	"os"
-	"time"
 
-	"github.com/openkcm/common-sdk/pkg/health"
+	"github.com/openkcm/common-sdk/pkg/commongrpc"
 	"github.com/samber/oops"
-	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
-	"google.golang.org/grpc"
 
 	pb "github.com/envoyproxy/gateway/proto/extension"
-	slogctx "github.com/veqryn/slog-context"
-	healthpb "google.golang.org/grpc/health/grpc_health_v1"
-
 	"github.com/openkcm/gateway-extension/internal/config"
 	"github.com/openkcm/gateway-extension/internal/extensions"
+	slogctx "github.com/veqryn/slog-context"
 )
-
-const (
-	Five = 5 * time.Second
-)
-
-// createGRPCServer creates the gRPC server using the given config
-func createGRPCServer(_ context.Context, _ *config.Config) *grpc.Server {
-	// Create the gRPC server options
-	var opts []grpc.ServerOption
-
-	// https://github.com/kubeshop/tracetest/tree/main/examples/quick-start-grpc-stream-propagation/consumer-worker
-	// https://github.com/kubeshop/tracetest/tree/main/examples/quick-start-grpc-stream-propagation/producer-api
-	opts = append(opts, grpc.StatsHandler(otelgrpc.NewServerHandler()))
-	return grpc.NewServer(opts...)
-}
 
 // StartGRPCServer starts the gRPC server using the given config.
 func StartGRPCServer(ctx context.Context, cfg *config.Config) error {
 	// Create the gRPC server
-	grpcServer := createGRPCServer(ctx, cfg)
+	grpcServer := commongrpc.NewServer(ctx, &cfg.Listener.TCP)
 
 	// Register the servers with the gRPC server
-	pb.RegisterEnvoyGatewayExtensionServer(grpcServer, extensions.NewGatewayExtension())
-	healthpb.RegisterHealthServer(grpcServer, &health.GRPCServer{})
+
+	pb.RegisterEnvoyGatewayExtensionServer(grpcServer, extensions.NewGatewayExtension(&cfg.FeatureGates))
 
 	// Create the listener
 	listener, err := createListener(cfg)
@@ -82,9 +62,6 @@ func createListener(cfg *config.Config) (net.Listener, error) {
 
 	switch cfg.Listener.Type {
 	case config.UNIXListener:
-		if cfg.Listener.UNIX == nil {
-			cfg.Listener.UNIX = &config.UNIX{SocketPath: "/etc/envoy/gateway/extension.sock"}
-		}
 		socketPath := cfg.Listener.UNIX.SocketPath
 		// remove old socket
 		err := os.Remove(socketPath)
@@ -94,11 +71,6 @@ func createListener(cfg *config.Config) (net.Listener, error) {
 
 		return net.Listen("unix", socketPath)
 	case config.TCPListener:
-		if cfg.Listener.TCP == nil {
-			cfg.Listener.TCP = &config.TCP{
-				Address: ":9092",
-			}
-		}
 		return net.Listen("tcp", cfg.Listener.TCP.Address)
 	}
 

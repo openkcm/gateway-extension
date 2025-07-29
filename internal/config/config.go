@@ -18,23 +18,18 @@ const (
 type Config struct {
 	commoncfg.BaseConfig `mapstructure:",squash"`
 
-	Listener             Listener                       `yaml:"listener"`
-	GRPCClientAttributes commoncfg.GRPCClientAttributes `yaml:"grpcClientAttributes"`
+	Listener Listener `yaml:"listener"`
 }
 
 type Listener struct {
-	Type            ListenerType  `yaml:"type" default:"tcp"`
-	TCP             *TCP          `yaml:"tcp"`
-	UNIX            *UNIX         `yaml:"unix"`
-	ShutdownTimeout time.Duration `yaml:"shutdownTimeout" default:"5s"`
-}
-
-type TCP struct {
-	// TCP.Address is the address to listen on for gRPC requests
-	Address string `yaml:"address" default:":9092"`
+	Type             ListenerType                   `yaml:"type" default:"tcp"`
+	TCP              commoncfg.GRPCServer           `yaml:"tcp"`
+	UNIX             UNIX                           `yaml:"unix"`
+	ShutdownTimeout  time.Duration                  `yaml:"shutdownTimeout" default:"5s"`
+	ClientAttributes commoncfg.GRPCClientAttributes `yaml:"clientAttributes"`
 }
 
 type UNIX struct {
 	// SocketPath is the Unix Path to listen on for gRPC requests
-	SocketPath string `yaml:"socketPath"`
+	SocketPath string `yaml:"socketPath" default:"/etc/envoy/gateway/extension.sock"`
 }

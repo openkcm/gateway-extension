@@ -10,6 +10,8 @@ import (
 	"encoding/json"
 
 	pb "github.com/envoyproxy/gateway/proto/extension"
+	"github.com/openkcm/common-sdk/pkg/commoncfg"
+	"github.com/openkcm/gateway-extension/internal/flags"
 	slogctx "github.com/veqryn/slog-context"
 
 	"github.com/openkcm/gateway-extension/api"
@@ -19,11 +21,13 @@ import (
 type GatewayExtension struct {
 	pb.UnimplementedEnvoyGatewayExtensionServer
 
+	features        *commoncfg.FeatureGates
 	jwtAuthClusters map[string]*urlCluster
 }
 
-func NewGatewayExtension() *GatewayExtension {
+func NewGatewayExtension(features *commoncfg.FeatureGates) *GatewayExtension {
 	return &GatewayExtension{
+		features:        features,
 		jwtAuthClusters: make(map[string]*urlCluster),
 	}
 }
@@ -60,6 +64,10 @@ func (s *GatewayExtension) PostHTTPListenerModify(ctx context.Context, req *pb.P
 
 		switch generic.Kind {
 		case api.JWTProviderKind:
+			// Do nothing if the feature gate is set
+			if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
+				continue
+			}
 			switch generic.APIVersion {
 			case api.JWTProviderV1Alpha1:
 				{
@@ -82,6 +90,11 @@ func (s *GatewayExtension) PostHTTPListenerModify(ctx context.Context, req *pb.P
 	for key, ext := range resources {
 		switch key {
 		case api.JWTProviderKind:
+			// Do nothing if the feature gate is set
+			if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
+				continue
+			}
+
 			err := s.ProcessJWTProviders(ctx, req.GetListener(), ext)
 			if err != nil {
 				return nil, err
@@ -101,6 +114,14 @@ func (s *GatewayExtension) PostHTTPListenerModify(ctx context.Context, req *pb.P
 // PostTranslateModify is always executed when an extension is loaded
 func (s *GatewayExtension) PostTranslateModify(ctx context.Context, req *pb.PostTranslateModifyRequest) (*pb.PostTranslateModifyResponse, error) {
 	ctx = slogctx.With(ctx, "envoy-xds-hook", "PostTranslateModify")
+
+	// Return response with same data if the feature gate is set
+	if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
+		return &pb.PostTranslateModifyResponse{
+			Clusters: req.GetClusters(),
+			Secrets:  req.GetSecrets(),
+		}, nil
+	}
 
 	slogctx.Info(ctx, "Calling ...")
 
@@ -128,6 +149,12 @@ func (s *GatewayExtension) PostVirtualHostModify(ctx context.Context, req *pb.Po
 	resp := &pb.PostVirtualHostModifyResponse{
 		VirtualHost: req.GetVirtualHost(),
 	}
+
+	// Return response with same data if the feature gate is set
+	if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
+		return resp, nil
+	}
+
 	if req.GetVirtualHost() == nil {
 		slogctx.Warn(ctx, "Nil VirtualHost")
 		return resp, nil

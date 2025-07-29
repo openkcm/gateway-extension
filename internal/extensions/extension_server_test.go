@@ -10,6 +10,7 @@ import (
 	"github.com/envoyproxy/gateway/proto/extension"
 	"github.com/envoyproxy/go-control-plane/pkg/wellknown"
 	"github.com/google/go-cmp/cmp"
+	"github.com/openkcm/common-sdk/pkg/commoncfg"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/testing/protocmp"
@@ -41,13 +42,15 @@ func mustNewAny(src proto.Message) *anypb.Any {
 
 func TestGatewayExtension_PostHTTPListenerModify(t *testing.T) {
 	tests := []struct {
-		name    string
-		req     *extension.PostHTTPListenerModifyRequest
-		want    *extension.PostHTTPListenerModifyResponse
-		wantErr assert.ErrorAssertionFunc
+		name     string
+		features *commoncfg.FeatureGates
+		req      *extension.PostHTTPListenerModifyRequest
+		want     *extension.PostHTTPListenerModifyResponse
+		wantErr  assert.ErrorAssertionFunc
 	}{
 		{
-			name: "Modify request",
+			name:     "Modify request",
+			features: &commoncfg.FeatureGates{},
 			req: &extension.PostHTTPListenerModifyRequest{
 				Listener: &listenerv3.Listener{
 					FilterChains: []*listenerv3.FilterChain{{
@@ -195,7 +198,7 @@ func TestGatewayExtension_PostHTTPListenerModify(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := NewGatewayExtension()
+			s := NewGatewayExtension(tt.features)
 			req := proto.CloneOf(tt.req)
 			got, err := s.PostHTTPListenerModify(t.Context(), req)
 			if !tt.wantErr(t, err, fmt.Sprintf("PostHTTPListenerModify(%v)", req)) {
@@ -229,13 +232,15 @@ func TestGatewayExtension_PostHTTPListenerModify_WellKnown(t *testing.T) {
 	go startWellKnownServer()
 
 	tests := []struct {
-		name    string
-		req     *extension.PostHTTPListenerModifyRequest
-		want    *extension.PostHTTPListenerModifyResponse
-		wantErr assert.ErrorAssertionFunc
+		name     string
+		features *commoncfg.FeatureGates
+		req      *extension.PostHTTPListenerModifyRequest
+		want     *extension.PostHTTPListenerModifyResponse
+		wantErr  assert.ErrorAssertionFunc
 	}{
 		{
-			name: "Well known JWT authentication",
+			name:     "Well known JWT authentication",
+			features: &commoncfg.FeatureGates{},
 			req: &extension.PostHTTPListenerModifyRequest{
 				Listener: &listenerv3.Listener{
 					FilterChains: []*listenerv3.FilterChain{{
@@ -372,7 +377,7 @@ func TestGatewayExtension_PostHTTPListenerModify_WellKnown(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := NewGatewayExtension()
+			s := NewGatewayExtension(tt.features)
 			req := proto.CloneOf(tt.req)
 			got, err := s.PostHTTPListenerModify(t.Context(), req)
 			if !tt.wantErr(t, err, fmt.Sprintf("PostHTTPListenerModify(%v)", req)) {
@@ -523,13 +528,15 @@ func TestGatewayExtension_PostTranslateModify(t *testing.T) {
 
 func TestGatewayExtension_PostVirtualHostModify(t *testing.T) {
 	tests := []struct {
-		name    string
-		req     *extension.PostVirtualHostModifyRequest
-		want    *extension.PostVirtualHostModifyResponse
-		wantErr assert.ErrorAssertionFunc
+		name     string
+		features *commoncfg.FeatureGates
+		req      *extension.PostVirtualHostModifyRequest
+		want     *extension.PostVirtualHostModifyResponse
+		wantErr  assert.ErrorAssertionFunc
 	}{
 		{
-			name: "Post Virtual Host Modify",
+			name:     "Post Virtual Host Modify",
+			features: &commoncfg.FeatureGates{},
 			req: &extension.PostVirtualHostModifyRequest{
 				VirtualHost: &routev3.VirtualHost{
 					Name: "example_com_443|openkcm",
@@ -568,7 +575,8 @@ func TestGatewayExtension_PostVirtualHostModify(t *testing.T) {
 			wantErr: assert.NoError,
 		},
 		{
-			name: "Nil virtual host",
+			name:     "Nil virtual host",
+			features: &commoncfg.FeatureGates{},
 			req: &extension.PostVirtualHostModifyRequest{
 				VirtualHost: nil,
 			},
@@ -580,7 +588,7 @@ func TestGatewayExtension_PostVirtualHostModify(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := NewGatewayExtension()
+			s := NewGatewayExtension(tt.features)
 			got, err := s.PostVirtualHostModify(t.Context(), tt.req)
 			if !tt.wantErr(t, err, fmt.Sprintf("PostVirtualHostModify(ctx, %v)", tt.req)) {
 				return

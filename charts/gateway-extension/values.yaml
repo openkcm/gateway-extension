@@ -256,16 +256,21 @@ config:
   # Labels associated to metrics, traces and logs
   labels: {}
 
+  # Feature Gates
+#  featureGates:
+#    DisableJWTProviderComputation: true
+
   listener:
     type: "tcp" # one of: tcp, unix
     tcp:
       address: ":9092"
-#    unix:
-#      socketPath: "/run/envoy/gateway/sockets/extension.sock"
-
-  grpcClientAttributes:
-    keepaliveTimeSec: 1
-    keepaliveTimeoutSec: 1
+      flags:
+        health: true
+    unix:
+      socketPath: "/run/envoy/gateway/sockets/extension.sock"
+    clientAttributes:
+      keepaliveTime: 1s
+      keepaliveTimeout: 5s
 
   status:
     enabled: true

@@ -2,16 +2,21 @@ application:
   name: gateway-extension
   environment: development
 
+featureGates:
+  DisableJWTProviderComputation: true
+
 listener:
-  type: "unix" # one of: tcp, unix
+  type: "tcp" # one of: tcp, unix
   tcp:
     address: ":9092"
+    flags:
+      health: true
   unix:
     socketPath: "extension.sock"
+  clientAttributes:
+    keepaliveTime: 1s
+    keepaliveTimeout: 5s
 
-grpcClientAttributes:
-  keepaliveTimeSec: 1
-  keepaliveTimeoutSec: 1
 
 status:
   enabled: true
