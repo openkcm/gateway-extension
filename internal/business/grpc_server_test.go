@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/openkcm/common-sdk/pkg/commoncfg"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/openkcm/gateway-extension/internal/config"
@@ -22,7 +23,7 @@ func TestStartGRPCServer(t *testing.T) {
 			cfg: &config.Config{
 				Listener: config.Listener{
 					Type: config.TCPListener,
-					TCP:  &config.TCP{Address: ":0"},
+					TCP:  commoncfg.GRPCServer{Address: ":0"},
 				},
 			},
 			wantErr: assert.NoError,
@@ -32,7 +33,7 @@ func TestStartGRPCServer(t *testing.T) {
 			cfg: &config.Config{
 				Listener: config.Listener{
 					Type: config.UNIXListener,
-					UNIX: &config.UNIX{
+					UNIX: config.UNIX{
 						SocketPath: "extension.sock",
 					},
 				},
@@ -53,8 +54,8 @@ func TestStartGRPCServer(t *testing.T) {
 			cfg: &config.Config{
 				Listener: config.Listener{
 					Type: "",
-					TCP:  nil,
-					UNIX: nil,
+					TCP:  commoncfg.GRPCServer{},
+					UNIX: config.UNIX{},
 				},
 			},
 			wantErr: assert.NoError,
@@ -66,12 +67,14 @@ func TestStartGRPCServer(t *testing.T) {
 			defer cancel()
 
 			errCh := make(chan error)
+
 			go func() {
 				errCh <- StartGRPCServer(ctx, tt.cfg)
 			}()
 
 			time.Sleep(1 * time.Second)
 			cancel()
+
 			err := <-errCh
 			tt.wantErr(t, err, fmt.Sprintf("StartGRPCServer(ctx, %v)", tt.cfg))
 		})

@@ -9,7 +9,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/mcuadros/go-defaults"
 	"github.com/openkcm/common-sdk/pkg/commoncfg"
 	"github.com/openkcm/common-sdk/pkg/health"
 	"github.com/openkcm/common-sdk/pkg/logger"
@@ -47,7 +46,6 @@ func run(ctx context.Context) error {
 		return oops.In("main").
 			Wrapf(err, "Failed to load the configuration")
 	}
-	defaults.SetDefaults(cfg)
 
 	err = commoncfg.UpdateConfigVersion(&cfg.BaseConfig, root.BuildVersion)
 	if err != nil {
@@ -90,12 +88,12 @@ func run(ctx context.Context) error {
 		case config.UNIXListener:
 			healthOptions = append(healthOptions, health.WithGRPCServerChecker(commoncfg.GRPCClient{
 				Address:    "unix://" + cfg.Listener.UNIX.SocketPath,
-				Attributes: cfg.GRPCClientAttributes,
+				Attributes: cfg.Listener.ClientAttributes,
 			}))
 		case config.TCPListener:
 			healthOptions = append(healthOptions, health.WithGRPCServerChecker(commoncfg.GRPCClient{
 				Address:    cfg.Listener.TCP.Address,
-				Attributes: cfg.GRPCClientAttributes,
+				Attributes: cfg.Listener.ClientAttributes,
 			}))
 		}
 
@@ -134,7 +132,9 @@ func runFuncWithSignalHandling(f func(context.Context) error) int {
 	defer cancelOnSignal()
 
 	exitCode := 0
-	if err := f(ctx); err != nil {
+	err := f(ctx)
+
+	if err != nil {
 		slogctx.Error(ctx, "Failed to start the application", "error", err)
 		_, _ = fmt.Fprintln(os.Stderr, err)
 		exitCode = 1

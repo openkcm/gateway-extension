@@ -17,6 +17,11 @@ data:
         {{- toYaml . | nindent 8 }}
       {{- end}}
 
+    {{- with .featureGates }}
+    featureGates:
+      {{- toYaml . | nindent 6 }}
+    {{- end}}
+
     listener:
       {{- toYaml .listener | nindent 6 }}
 

@@ -112,7 +112,7 @@ spec:
           {{- end }}
           volumeMounts:
             - name: {{ include "gateway-extension.name" . }}-config-volume
-              mountPath: /etc/{{ include "gateway-extension.name" . }}
+              mountPath: /etc/gateway-extension
               readOnly: true
           {{- with .Values.extraVolumeMounts }}
             {{- toYaml . | nindent 12 }}

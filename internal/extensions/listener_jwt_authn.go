@@ -36,7 +36,9 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 
 	// Collect all jwt providers
 	slogctx.Info(ctx, "Processing JWTProviders", "number", len(resources))
+
 	reqs := []*jwtauth3.JwtRequirement{}
+
 	for _, resource := range resources {
 		jwtp, ok := resource.(*v1alpha1.JWTProvider)
 		if !ok {
@@ -47,6 +49,7 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 
 		jwksTimeoutSec := int64(2)
 		jwksCacheDuration := int64(5 * 60)
+
 		var jwksUri string
 		if jwtp.Spec.RemoteJwks != nil {
 			jwksUri = jwtp.Spec.RemoteJwks.URI
@@ -54,6 +57,7 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 			if jwtp.Spec.RemoteJwks.TimeoutSec > 0 {
 				jwksTimeoutSec = jwtp.Spec.RemoteJwks.TimeoutSec
 			}
+
 			if jwtp.Spec.RemoteJwks.CacheDuration > 0 {
 				jwksCacheDuration = jwtp.Spec.RemoteJwks.CacheDuration
 			}
@@ -62,6 +66,7 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 			if err != nil {
 				return err
 			}
+
 			jwksUri = uri
 		}
 
@@ -69,6 +74,7 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 			slogctx.Error(ctx, "Failed to parse the remote Jwks uri", "error", err)
 			continue
 		}
+
 		urlCLuster, err := url2Cluster(jwksUri)
 		if err != nil {
 			slogctx.Error(ctx, "Failed to translate url to cluster", "error", err)
@@ -92,6 +98,7 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 			if rp, err = buildNonRouteRetryPolicy(jwtp.Spec.RemoteJwks.Retry); err != nil {
 				return err
 			}
+
 			remoteJwks.RetryPolicy = rp
 		}
 
@@ -117,6 +124,7 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 		if len(jwtp.Spec.FromHeaders) > 0 {
 			jwt.FromHeaders = buildJwtFromHeaders(jwtp.Spec.FromHeaders)
 		}
+
 		if len(jwtp.Spec.ClaimToHeaders) > 0 {
 			jwt.ClaimToHeaders = buildJwtClaimToHeader(jwtp.Spec.ClaimToHeaders)
 		}
@@ -134,6 +142,7 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 			},
 		})
 		s.jwtAuthClusters[urlCLuster.name] = urlCLuster
+
 		slogctx.Info(ctx, "Processed JWTProvider resource", "name", jwtp.Name)
 	}
 
@@ -165,6 +174,7 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 
 	// First, get the filter chains from the listener
 	filterChains := listener.GetFilterChains()
+
 	defaultFC := listener.GetDefaultFilterChain()
 	if defaultFC != nil {
 		filterChains = append(filterChains, defaultFC)
@@ -183,8 +193,10 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 		if err != nil {
 			slogctx.Error(ctx, "Failed to unmarshal the existing jwtAuthFilter filter",
 				"name", currChain.GetName(), "error", err)
+
 			continue
 		}
+
 		if baIndex == -1 {
 			// Create a new jwt auth filter
 			jwtAuthFilter = &jwtauth3.JwtAuthentication{
@@ -232,12 +244,15 @@ func findJwtAuthenticationFilter(chain []*hcm.HttpFilter) (*jwtauth3.JwtAuthenti
 	for i, filter := range chain {
 		if filter.GetName() == "envoy.filters.http.jwt_authn" {
 			ba := new(jwtauth3.JwtAuthentication)
-			if err := filter.GetTypedConfig().UnmarshalTo(ba); err != nil {
+			err := filter.GetTypedConfig().UnmarshalTo(ba)
+			if err != nil {
 				return nil, -1, err
 			}
+
 			return ba, i, nil
 		}
 	}
+
 	return nil, -1, nil
 }
 
@@ -282,6 +297,7 @@ func buildNonRouteRetryPolicy(rr *v1alpha1.Retry) (*corev3.RetryPolicy, error) {
 	if retryOn == "" {
 		retryOn = retryDefaultRetryOn
 	}
+
 	rp := &corev3.RetryPolicy{
 		RetryOn: retryOn,
 	}
@@ -291,10 +307,12 @@ func buildNonRouteRetryPolicy(rr *v1alpha1.Retry) (*corev3.RetryPolicy, error) {
 		if baseInterval <= 0 {
 			baseInterval = 1
 		}
+
 		maxInterval := rr.BackOff.MaxIntervalSec
 		if maxInterval <= 0 {
 			maxInterval = 1
 		}
+
 		rp.RetryBackOff = &corev3.BackoffStrategy{
 			BaseInterval: &durationpb.Duration{
 				Seconds: baseInterval,
@@ -326,23 +344,29 @@ type wellKnownOpenIDConfiguration struct {
 
 func extractJWKSFromWellKnownOpenIDConfiguration(ctx context.Context, issuer string) (string, error) {
 	wkoc := wellKnownOpenIDConfiguration{}
+
 	parsedURL, err := url.Parse(issuer)
 	if err != nil {
 		return "", err
 	}
 
 	wkocURI := parsedURL.JoinPath(".well-known/openid-configuration")
+
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, wkocURI.String(), nil)
 	if err != nil {
 		return "", fmt.Errorf("could not build request to get well known OpenID configuration: %w", err)
 	}
+
 	client := http.DefaultClient
+
 	response, err := client.Do(request)
 	if err != nil {
 		return "", fmt.Errorf("could not get well known OpenID configuration: %w", err)
 	}
+
 	defer func() {
-		if err := response.Body.Close(); err != nil {
+		err := response.Body.Close()
+		if err != nil {
 			slogctx.Error(ctx, "could not close response body", "error", err)
 		}
 	}()

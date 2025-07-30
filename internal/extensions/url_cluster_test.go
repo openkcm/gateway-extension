@@ -80,6 +80,7 @@ func Test_url2Cluster(t *testing.T) {
 			if !tt.wantErr(t, err, fmt.Sprintf("url2Cluster(%v)", tt.strURL)) {
 				return
 			}
+
 			assert.Equalf(t, tt.want, got, "url2Cluster(%v)", tt.strURL)
 		})
 	}

@@ -9,21 +9,26 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/openkcm/common-sdk/pkg/commoncfg"
+
 	pb "github.com/envoyproxy/gateway/proto/extension"
 	slogctx "github.com/veqryn/slog-context"
 
 	"github.com/openkcm/gateway-extension/api"
 	gev1a1 "github.com/openkcm/gateway-extension/api/v1alpha1"
+	"github.com/openkcm/gateway-extension/internal/flags"
 )
 
 type GatewayExtension struct {
 	pb.UnimplementedEnvoyGatewayExtensionServer
 
+	features        *commoncfg.FeatureGates
 	jwtAuthClusters map[string]*urlCluster
 }
 
-func NewGatewayExtension() *GatewayExtension {
+func NewGatewayExtension(features *commoncfg.FeatureGates) *GatewayExtension {
 	return &GatewayExtension{
+		features:        features,
 		jwtAuthClusters: make(map[string]*urlCluster),
 	}
 }
@@ -51,28 +56,39 @@ func (s *GatewayExtension) PostHTTPListenerModify(ctx context.Context, req *pb.P
 	}
 
 	resources := make(map[string][]any)
+
 	for _, ext := range req.GetPostListenerContext().GetExtensionResources() {
 		var generic api.Generic
-		if err := json.Unmarshal(ext.GetUnstructuredBytes(), &generic); err != nil {
+		err := json.Unmarshal(ext.GetUnstructuredBytes(), &generic)
+		if err != nil {
 			slogctx.Error(ctx, "Failed to unmarshal the extension", "error", err)
 			continue
 		}
 
 		switch generic.Kind {
 		case api.JWTProviderKind:
+			// Do nothing if the feature gate is set
+			if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
+				continue
+			}
+
 			switch generic.APIVersion {
 			case api.JWTProviderV1Alpha1:
 				{
 					slogctx.Info(ctx, "Found a resource", "yaml", generic)
+
 					jwtProvider := &gev1a1.JWTProvider{}
-					if err := json.Unmarshal(ext.GetUnstructuredBytes(), jwtProvider); err != nil {
+					err := json.Unmarshal(ext.GetUnstructuredBytes(), jwtProvider)
+					if err != nil {
 						slogctx.Error(ctx, "Failed to unmarshal the v1alpha1.JWTProvider CRD", "error", err)
 						continue
 					}
+
 					_, ok := resources[api.JWTProviderKind]
 					if !ok {
 						resources[api.JWTProviderKind] = make([]any, 0)
 					}
+
 					resources[api.JWTProviderKind] = append(resources[api.JWTProviderKind], jwtProvider)
 				}
 			}
@@ -82,6 +98,11 @@ func (s *GatewayExtension) PostHTTPListenerModify(ctx context.Context, req *pb.P
 	for key, ext := range resources {
 		switch key {
 		case api.JWTProviderKind:
+			// Do nothing if the feature gate is set
+			if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
+				continue
+			}
+
 			err := s.ProcessJWTProviders(ctx, req.GetListener(), ext)
 			if err != nil {
 				return nil, err
@@ -90,6 +111,7 @@ func (s *GatewayExtension) PostHTTPListenerModify(ctx context.Context, req *pb.P
 	}
 
 	slogctx.Info(ctx, "Called successfully.")
+
 	return resp, nil
 }
 
@@ -102,6 +124,14 @@ func (s *GatewayExtension) PostHTTPListenerModify(ctx context.Context, req *pb.P
 func (s *GatewayExtension) PostTranslateModify(ctx context.Context, req *pb.PostTranslateModifyRequest) (*pb.PostTranslateModifyResponse, error) {
 	ctx = slogctx.With(ctx, "envoy-xds-hook", "PostTranslateModify")
 
+	// Return response with same data if the feature gate is set
+	if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
+		return &pb.PostTranslateModifyResponse{
+			Clusters: req.GetClusters(),
+			Secrets:  req.GetSecrets(),
+		}, nil
+	}
+
 	slogctx.Info(ctx, "Calling ...")
 
 	clusters, err := s.TranslateModifyClusters(ctx, req.GetClusters())
@@ -110,6 +140,7 @@ func (s *GatewayExtension) PostTranslateModify(ctx context.Context, req *pb.Post
 	}
 
 	slogctx.Info(ctx, "Called successfully.")
+
 	return &pb.PostTranslateModifyResponse{
 		Clusters: clusters,
 		Secrets:  req.GetSecrets(),
@@ -128,6 +159,12 @@ func (s *GatewayExtension) PostVirtualHostModify(ctx context.Context, req *pb.Po
 	resp := &pb.PostVirtualHostModifyResponse{
 		VirtualHost: req.GetVirtualHost(),
 	}
+
+	// Return response with same data if the feature gate is set
+	if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
+		return resp, nil
+	}
+
 	if req.GetVirtualHost() == nil {
 		slogctx.Warn(ctx, "Nil VirtualHost")
 		return resp, nil
@@ -139,5 +176,6 @@ func (s *GatewayExtension) PostVirtualHostModify(ctx context.Context, req *pb.Po
 	}
 
 	slogctx.Info(ctx, "Called successfully.")
+
 	return resp, nil
 }

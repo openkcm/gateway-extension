@@ -22,6 +22,7 @@ func (s *GatewayExtension) TranslateModifyClusters(ctx context.Context, cls []*c
 		if IsCustomName(c.GetName()) {
 			continue
 		}
+
 		clusters = append(clusters, c)
 	}
 
@@ -70,6 +71,7 @@ func (s *GatewayExtension) TranslateModifyClusters(ctx context.Context, cls []*c
 			},
 		}
 		clusters = append(clusters, cluster)
+
 		delete(s.jwtAuthClusters, k)
 	}
 
