@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/openkcm/gateway-extension/compare/v0.3.0...v0.3.1) (2025-08-02)
+
+
+### Bug Fixes
+
+* return same list of clusters if list of clusters is empty ([#57](https://github.com/openkcm/gateway-extension/issues/57)) ([5e2b253](https://github.com/openkcm/gateway-extension/commit/5e2b253d19ae1a548bff0b3f0f6ed13c4453c566))
+
 ## [0.3.0](https://github.com/openkcm/gateway-extension/compare/v0.2.3...v0.3.0) (2025-08-02)
 
 
