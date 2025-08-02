@@ -223,7 +223,9 @@ func TestGatewayExtension_PostHTTPListenerModify(t *testing.T) {
 func startWellKnownServer() {
 	err := http.ListenAndServe(":4543", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
-		if _, err := w.Write(testdata.OpenIDConfigurationJSON); err != nil {
+
+		_, err := w.Write(testdata.OpenIDConfigurationJSON)
+		if err != nil {
 			panic(err)
 		}
 	}))

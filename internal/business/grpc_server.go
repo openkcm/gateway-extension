@@ -25,7 +25,7 @@ func StartGRPCServer(ctx context.Context, cfg *config.Config) error {
 	pb.RegisterEnvoyGatewayExtensionServer(grpcServer, extensions.NewGatewayExtension(&cfg.FeatureGates))
 
 	// Create the listener
-	listener, err := createListener(cfg)
+	listener, err := createListener(ctx, cfg)
 	if err != nil {
 		return oops.In("TCP GatewayExtension").
 			WithContext(ctx).
@@ -55,10 +55,12 @@ func StartGRPCServer(ctx context.Context, cfg *config.Config) error {
 	return nil
 }
 
-func createListener(cfg *config.Config) (net.Listener, error) {
+func createListener(ctx context.Context, cfg *config.Config) (net.Listener, error) {
 	if cfg.Listener.Type == "" {
 		cfg.Listener.Type = config.TCPListener
 	}
+
+	var lc net.ListenConfig
 
 	switch cfg.Listener.Type {
 	case config.UNIXListener:
@@ -69,9 +71,9 @@ func createListener(cfg *config.Config) (net.Listener, error) {
 			return nil, oops.Wrapf(err, "Failed to remove unix socket file %s", socketPath)
 		}
 
-		return net.Listen("unix", socketPath)
+		return lc.Listen(ctx, "unix", socketPath)
 	case config.TCPListener:
-		return net.Listen("tcp", cfg.Listener.TCP.Address)
+		return lc.Listen(ctx, "tcp", cfg.Listener.TCP.Address)
 	}
 
 	return nil, oops.New("Something is wrong, this error should be never popup! TCP or UNIX configuration is required")

@@ -90,6 +90,7 @@ func run(ctx context.Context) error {
 		case config.TCPListener:
 			cfg.Listener.Client.Address = cfg.Listener.TCP.Address
 		}
+
 		healthOptions = append(healthOptions, health.WithGRPCServerChecker(cfg.Listener.Client))
 
 		readiness := status.WithReadiness(
@@ -127,8 +128,8 @@ func runFuncWithSignalHandling(f func(context.Context) error) int {
 	defer cancelOnSignal()
 
 	exitCode := 0
-	err := f(ctx)
 
+	err := f(ctx)
 	if err != nil {
 		slogctx.Error(ctx, "Failed to start the application", "error", err)
 		_, _ = fmt.Fprintln(os.Stderr, err)

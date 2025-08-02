@@ -14,6 +14,7 @@ func findHCM(filterChain *listenerv3.FilterChain) (*hcm.HttpConnectionManager, i
 	for filterIndex, filter := range filterChain.GetFilters() {
 		if filter.GetName() == wellknown.HTTPConnectionManager {
 			h := new(hcm.HttpConnectionManager)
+
 			err := filter.GetTypedConfig().UnmarshalTo(h)
 			if err != nil {
 				return nil, -1, err

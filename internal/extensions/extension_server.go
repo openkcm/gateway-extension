@@ -1,8 +1,3 @@
-// Copyright Envoy Gateway Authors
-// SPDX-License-Identifier: Apache-2.0
-// The full text of the Apache license is available in the LICENSE file at
-// the root of the repo.
-
 package extensions
 
 import (
@@ -63,6 +58,7 @@ func (s *GatewayExtension) PostHTTPListenerModify(ctx context.Context, req *pb.P
 
 	for _, ext := range req.GetPostListenerContext().GetExtensionResources() {
 		var generic api.Generic
+
 		err := json.Unmarshal(ext.GetUnstructuredBytes(), &generic)
 		if err != nil {
 			slogctx.Error(ctx, "Failed to unmarshal the extension", "error", err)
@@ -82,6 +78,7 @@ func (s *GatewayExtension) PostHTTPListenerModify(ctx context.Context, req *pb.P
 					slogctx.Info(ctx, "Found a resource", "yaml", generic)
 
 					jwtProvider := &gev1a1.JWTProvider{}
+
 					err := json.Unmarshal(ext.GetUnstructuredBytes(), jwtProvider)
 					if err != nil {
 						slogctx.Error(ctx, "Failed to unmarshal the v1alpha1.JWTProvider CRD", "error", err)
@@ -145,6 +142,7 @@ func (s *GatewayExtension) PostTranslateModify(ctx context.Context, req *pb.Post
 	}
 
 	slogctx.Info(ctx, "Called successfully.")
+
 	resp.Clusters = clusters
 
 	return resp, nil
