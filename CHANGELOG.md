@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/openkcm/gateway-extension/compare/v0.2.1...v0.2.2) (2025-08-02)
+
+
+### Bug Fixes
+
+* small code rearrangement ([#51](https://github.com/openkcm/gateway-extension/issues/51)) ([8815bc8](https://github.com/openkcm/gateway-extension/commit/8815bc8fa2cc6732b606557b4639e75b22bf9815))
+
 ## [0.2.1](https://github.com/openkcm/gateway-extension/compare/v0.2.0...v0.2.1) (2025-08-02)
 
 
