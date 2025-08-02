@@ -22,11 +22,11 @@ type Config struct {
 }
 
 type Listener struct {
-	Type             ListenerType                   `yaml:"type" default:"tcp"`
-	TCP              commoncfg.GRPCServer           `yaml:"tcp"`
-	UNIX             UNIX                           `yaml:"unix"`
-	ShutdownTimeout  time.Duration                  `yaml:"shutdownTimeout" default:"5s"`
-	ClientAttributes commoncfg.GRPCClientAttributes `yaml:"clientAttributes"`
+	Type            ListenerType         `yaml:"type" default:"tcp"`
+	TCP             commoncfg.GRPCServer `yaml:"tcp"`
+	UNIX            UNIX                 `yaml:"unix"`
+	ShutdownTimeout time.Duration        `yaml:"shutdownTimeout" default:"5s"`
+	Client          commoncfg.GRPCClient `yaml:"client"`
 }
 
 type UNIX struct {

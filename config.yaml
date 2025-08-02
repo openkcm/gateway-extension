@@ -13,9 +13,15 @@ listener:
       health: true
   unix:
     socketPath: "extension.sock"
-  clientAttributes:
-    keepaliveTime: 1s
-    keepaliveTimeout: 5s
+  client:
+    attributes:
+      keepaliveTime: 1s
+      keepaliveTimeout: 5s
+    pool:
+      initialCapacity: 1
+      maxCapacity: 2
+      idleTimeout: 5s
+      maxLifeDuration: 60s
 
 
 status:

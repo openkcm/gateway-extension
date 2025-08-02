@@ -86,16 +86,11 @@ func run(ctx context.Context) error {
 
 		switch cfg.Listener.Type {
 		case config.UNIXListener:
-			healthOptions = append(healthOptions, health.WithGRPCServerChecker(commoncfg.GRPCClient{
-				Address:    "unix://" + cfg.Listener.UNIX.SocketPath,
-				Attributes: cfg.Listener.ClientAttributes,
-			}))
+			cfg.Listener.Client.Address = "unix://" + cfg.Listener.UNIX.SocketPath
 		case config.TCPListener:
-			healthOptions = append(healthOptions, health.WithGRPCServerChecker(commoncfg.GRPCClient{
-				Address:    cfg.Listener.TCP.Address,
-				Attributes: cfg.Listener.ClientAttributes,
-			}))
+			cfg.Listener.Client.Address = cfg.Listener.TCP.Address
 		}
+		healthOptions = append(healthOptions, health.WithGRPCServerChecker(cfg.Listener.Client))
 
 		readiness := status.WithReadiness(
 			health.NewHandler(
