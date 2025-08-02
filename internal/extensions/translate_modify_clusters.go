@@ -32,14 +32,13 @@ func (s *GatewayExtension) TranslateModifyClusters(ctx context.Context, cls []*c
 	}
 
 	// will be added new list of the clusters
-	s.jwtAuthClustersMu.Lock()
-	defer s.jwtAuthClustersMu.Unlock()
+	s.jwtAuthClustersMu.RLock()
+	defer s.jwtAuthClustersMu.RUnlock()
 
-	for k, v := range s.jwtAuthClusters {
+	for _, v := range s.jwtAuthClusters {
 		clusterName := v.CustomName()
 
 		slogctx.Info(ctx, "Processing cached cluster", "name", clusterName)
-		slogctx.Debug(ctx, "Processing cached cluster", "cluster", v)
 
 		trCtx, err := anypb.New(buildXdsUpstreamTLSSocket(v.hostname))
 		if err != nil {
@@ -81,8 +80,6 @@ func (s *GatewayExtension) TranslateModifyClusters(ctx context.Context, cls []*c
 			},
 		}
 		clusters = append(clusters, cluster)
-
-		delete(s.jwtAuthClusters, k)
 	}
 
 	return clusters, nil

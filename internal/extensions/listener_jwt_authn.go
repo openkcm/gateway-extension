@@ -42,6 +42,10 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 	s.jwtAuthClustersMu.Lock()
 	defer s.jwtAuthClustersMu.Unlock()
 
+	for k, _ := range s.jwtAuthClusters {
+		delete(s.jwtAuthClusters, k)
+	}
+
 	for _, resource := range resources {
 		jwtp, ok := resource.(*v1alpha1.JWTProvider)
 		if !ok {
