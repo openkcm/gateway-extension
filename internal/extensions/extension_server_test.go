@@ -470,6 +470,7 @@ func TestGatewayExtension_PostTranslateModify(t *testing.T) {
 													PortSpecifier: &corev3.SocketAddress_PortValue{
 														PortValue: uint32(443),
 													},
+													Protocol: corev3.SocketAddress_TCP,
 												},
 											},
 										},
@@ -536,7 +537,7 @@ func TestGatewayExtension_PostTranslateModify(t *testing.T) {
 					"actual  : %s%s", tt.want, got, diff), "PostTranslateModify(%v)", tt.req)
 			}
 
-			if len(s.jwtAuthClusters) >= len(tt.jwtAuthClusters) {
+			if len(s.jwtAuthClusters) != len(tt.jwtAuthClusters) {
 				assert.Fail(t, "Expected read jwtAuthClusters")
 			}
 		})
