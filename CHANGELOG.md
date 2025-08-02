@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/openkcm/gateway-extension/compare/v0.2.0...v0.2.1) (2025-08-02)
+
+
+### Bug Fixes
+
+* gRPC client configuration handling ([#49](https://github.com/openkcm/gateway-extension/issues/49)) ([eff6017](https://github.com/openkcm/gateway-extension/commit/eff601759bbf41bee92095e1d18a3ca2b84ac017))
+
 ## [0.2.0](https://github.com/openkcm/gateway-extension/compare/v0.1.3...v0.2.0) (2025-08-02)
 
 
