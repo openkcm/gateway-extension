@@ -27,6 +27,9 @@ func (s *GatewayExtension) TranslateModifyClusters(ctx context.Context, cls []*c
 	}
 
 	// will be added new list of the clusters
+	s.jwtAuthClustersMu.Lock()
+	defer s.jwtAuthClustersMu.Unlock()
+
 	for k, v := range s.jwtAuthClusters {
 		clusterName := v.CustomName()
 
@@ -55,6 +58,7 @@ func (s *GatewayExtension) TranslateModifyClusters(ctx context.Context, cls []*c
 											PortSpecifier: &corev3.SocketAddress_PortValue{
 												PortValue: uint32(443),
 											},
+											Protocol: corev3.SocketAddress_TCP,
 										},
 									},
 								},

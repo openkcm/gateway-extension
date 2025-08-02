@@ -8,6 +8,7 @@ package extensions
 import (
 	"context"
 	"encoding/json"
+	"sync"
 
 	"github.com/openkcm/common-sdk/pkg/commoncfg"
 
@@ -22,14 +23,17 @@ import (
 type GatewayExtension struct {
 	pb.UnimplementedEnvoyGatewayExtensionServer
 
-	features        *commoncfg.FeatureGates
-	jwtAuthClusters map[string]*urlCluster
+	features *commoncfg.FeatureGates
+
+	jwtAuthClustersMu sync.RWMutex
+	jwtAuthClusters   map[string]*urlCluster
 }
 
 func NewGatewayExtension(features *commoncfg.FeatureGates) *GatewayExtension {
 	return &GatewayExtension{
-		features:        features,
-		jwtAuthClusters: make(map[string]*urlCluster),
+		features:          features,
+		jwtAuthClustersMu: sync.RWMutex{},
+		jwtAuthClusters:   make(map[string]*urlCluster),
 	}
 }
 
