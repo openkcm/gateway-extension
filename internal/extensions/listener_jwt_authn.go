@@ -42,7 +42,7 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 	s.jwtAuthClustersMu.Lock()
 	defer s.jwtAuthClustersMu.Unlock()
 
-	for k, _ := range s.jwtAuthClusters {
+	for k := range s.jwtAuthClusters {
 		delete(s.jwtAuthClusters, k)
 	}
 
@@ -78,7 +78,8 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 			jwksUri = uri
 		}
 
-		if _, err := url.Parse(jwksUri); err != nil {
+		_, err := url.Parse(jwksUri)
+		if err != nil {
 			slogctx.Error(ctx, "Failed to parse the remote Jwks uri", "error", err)
 			continue
 		}
@@ -102,8 +103,8 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 		}
 		// Set the retry policy if it exists.
 		if jwtp.Spec.RemoteJwks != nil && jwtp.Spec.RemoteJwks.Retry != nil {
-			var rp *corev3.RetryPolicy
-			if rp, err = buildNonRouteRetryPolicy(jwtp.Spec.RemoteJwks.Retry); err != nil {
+			rp, err := buildNonRouteRetryPolicy(jwtp.Spec.RemoteJwks.Retry)
+			if err != nil {
 				return err
 			}
 
@@ -155,6 +156,7 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 	}
 
 	var jwtRequirement *jwtauth3.JwtRequirement
+
 	switch len(reqs) {
 	case 0:
 		jwtRequirement = &jwtauth3.JwtRequirement{
@@ -248,6 +250,7 @@ func findJwtAuthenticationFilter(chain []*hcm.HttpFilter) (*jwtauth3.JwtAuthenti
 	for i, filter := range chain {
 		if filter.GetName() == "envoy.filters.http.jwt_authn" {
 			ba := new(jwtauth3.JwtAuthentication)
+
 			err := filter.GetTypedConfig().UnmarshalTo(ba)
 			if err != nil {
 				return nil, -1, err
@@ -376,7 +379,8 @@ func extractJWKSFromWellKnownOpenIDConfiguration(ctx context.Context, issuer str
 	}()
 
 	// decode the well known OpenID configuration
-	if err := json.NewDecoder(response.Body).Decode(&wkoc); err != nil {
+	err = json.NewDecoder(response.Body).Decode(&wkoc)
+	if err != nil {
 		return "", fmt.Errorf("could not decode well known OpenID configuration: %w", err)
 	}
 

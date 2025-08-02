@@ -57,7 +57,8 @@ func url2Cluster(strURL string) (*urlCluster, error) {
 
 	name := clusterName(u.Hostname(), uint32(port))
 
-	if ip, err := netip.ParseAddr(u.Hostname()); err == nil {
+	ip, err := netip.ParseAddr(u.Hostname())
+	if err == nil {
 		if ip.Unmap().Is4() {
 			epType = EndpointTypeStatic
 		}
