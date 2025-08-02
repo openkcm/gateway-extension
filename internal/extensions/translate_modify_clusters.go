@@ -15,14 +15,17 @@ import (
 )
 
 func (s *GatewayExtension) TranslateModifyClusters(ctx context.Context, cls []*clusterv3.Cluster) ([]*clusterv3.Cluster, error) {
-	clusters := make([]*clusterv3.Cluster, 0)
+	s.jwtAuthClustersMu.RLock()
+	defer s.jwtAuthClustersMu.RUnlock()
 
 	if len(s.jwtAuthClusters) == 0 {
 		slogctx.Info(ctx, "No updates on the cached clusters; Continue skip updates of clusters configuration.")
-		return clusters, nil
+		return cls, nil
 	}
 
-	// remove clusters that has as suffix name the `openkcm`,
+	clusters := make([]*clusterv3.Cluster, 0)
+
+	// remove clusters that has as suffix name `openkcm`,
 	for _, c := range cls {
 		if IsCustomName(c.GetName()) {
 			continue
@@ -31,10 +34,7 @@ func (s *GatewayExtension) TranslateModifyClusters(ctx context.Context, cls []*c
 		clusters = append(clusters, c)
 	}
 
-	// will be added new list of the clusters
-	s.jwtAuthClustersMu.RLock()
-	defer s.jwtAuthClustersMu.RUnlock()
-
+	// will be added new list of the clusters with the suffix name `openkcm`
 	for _, v := range s.jwtAuthClusters {
 		clusterName := v.CustomName()
 
