@@ -48,7 +48,8 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 			continue
 		}
 
-		slogctx.Info(ctx, "Processing JWTProvider resource...", "name", jwtp.Name)
+		slogctx.Info(ctx, "Processing JWTProvider", "name", jwtp.Name)
+		slogctx.Debug(ctx, "Details on hte JWTProvider", "resource", jwtp)
 
 		jwksTimeoutSec := int64(2)
 		jwksCacheDuration := int64(5 * 60)
@@ -190,7 +191,7 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 		// If a jwt authentication filter already exists, update it. Otherwise, create it.
 		jwtAuthFilter, baIndex, err := findJwtAuthenticationFilter(httpConManager.GetHttpFilters())
 		if err != nil {
-			slogctx.Error(ctx, "Failed to unmarshal the existing jwtAuthFilter filter",
+			slogctx.Warn(ctx, "Failed to unmarshal the existing jwtAuthFilter filter; Continue.",
 				"name", currChain.GetName(), "error", err)
 
 			continue
