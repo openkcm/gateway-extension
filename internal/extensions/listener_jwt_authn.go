@@ -39,6 +39,9 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 
 	reqs := []*jwtauth3.JwtRequirement{}
 
+	s.jwtAuthClustersMu.Lock()
+	defer s.jwtAuthClustersMu.Unlock()
+
 	for _, resource := range resources {
 		jwtp, ok := resource.(*v1alpha1.JWTProvider)
 		if !ok {
@@ -146,26 +149,22 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 		slogctx.Info(ctx, "Processed JWTProvider resource", "name", jwtp.Name)
 	}
 
-	jwtRequirement := &jwtauth3.JwtRequirement{
-		RequiresType: &jwtauth3.JwtRequirement_RequiresAny{
-			RequiresAny: &jwtauth3.JwtRequirementOrList{
-				Requirements: reqs,
-			},
-		},
-	}
-
-	if len(reqs) == 1 {
-		jwtRequirement = &jwtauth3.JwtRequirement{
-			RequiresType: &jwtauth3.JwtRequirement_ProviderName{
-				ProviderName: reqs[0].GetProviderName(),
-			},
-		}
-	}
-
-	if len(reqs) == 0 {
+	var jwtRequirement *jwtauth3.JwtRequirement
+	switch len(reqs) {
+	case 0:
 		jwtRequirement = &jwtauth3.JwtRequirement{
 			RequiresType: &jwtauth3.JwtRequirement_AllowMissingOrFailed{
 				AllowMissingOrFailed: &emptypb.Empty{},
+			},
+		}
+	case 1:
+		jwtRequirement = reqs[0]
+	default:
+		jwtRequirement = &jwtauth3.JwtRequirement{
+			RequiresType: &jwtauth3.JwtRequirement_RequiresAny{
+				RequiresAny: &jwtauth3.JwtRequirementOrList{
+					Requirements: reqs,
+				},
 			},
 		}
 	}
