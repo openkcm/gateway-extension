@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/openkcm/gateway-extension/compare/v0.2.2...v0.2.3) (2025-08-02)
+
+
+### Bug Fixes
+
+* envoy cluster list is not updated ([#53](https://github.com/openkcm/gateway-extension/issues/53)) ([2ede102](https://github.com/openkcm/gateway-extension/commit/2ede102c63fd0e5741fc949f25fd3bd86ff5f60a))
+
 ## [0.2.2](https://github.com/openkcm/gateway-extension/compare/v0.2.1...v0.2.2) (2025-08-02)
 
 
