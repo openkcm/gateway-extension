@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/openkcm/gateway-extension/internal/flags"
 	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/durationpb"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -22,6 +21,7 @@ import (
 	slogctx "github.com/veqryn/slog-context"
 
 	"github.com/openkcm/gateway-extension/api/v1alpha1"
+	"github.com/openkcm/gateway-extension/internal/flags"
 )
 
 const (

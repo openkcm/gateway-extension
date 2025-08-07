@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/envoyproxy/go-control-plane/pkg/wellknown"
-	"github.com/openkcm/gateway-extension/internal/flags"
 	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/durationpb"
 
@@ -13,6 +12,8 @@ import (
 	endpointv3 "github.com/envoyproxy/go-control-plane/envoy/config/endpoint/v3"
 	tlsv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
 	slogctx "github.com/veqryn/slog-context"
+
+	"github.com/openkcm/gateway-extension/internal/flags"
 )
 
 func cleanUpClusters(cls []*clusterv3.Cluster) []*clusterv3.Cluster {
@@ -26,6 +27,7 @@ func cleanUpClusters(cls []*clusterv3.Cluster) []*clusterv3.Cluster {
 
 		clusters = append(clusters, c)
 	}
+
 	return clusters
 }
 

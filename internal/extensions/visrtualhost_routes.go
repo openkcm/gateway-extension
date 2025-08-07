@@ -3,13 +3,14 @@ package extensions
 import (
 	"context"
 
-	"github.com/openkcm/gateway-extension/internal/flags"
 	"google.golang.org/protobuf/types/known/anypb"
 
 	egv1a1 "github.com/envoyproxy/gateway/api/v1alpha1"
 	routev3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
 	jwtauthnv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/jwt_authn/v3"
 	slogctx "github.com/veqryn/slog-context"
+
+	"github.com/openkcm/gateway-extension/internal/flags"
 )
 
 func (s *GatewayExtension) VirtualHostModifyRoutes(ctx context.Context, routes []*routev3.Route) error {
@@ -21,6 +22,7 @@ func (s *GatewayExtension) VirtualHostModifyRoutes(ctx context.Context, routes [
 		if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
 			slogctx.Warn(ctx, "Skipping JWTProvider as is disabled through flags", "name", r.GetName())
 			r.TypedPerFilterConfig = make(map[string]*anypb.Any)
+
 			return nil
 		}
 
