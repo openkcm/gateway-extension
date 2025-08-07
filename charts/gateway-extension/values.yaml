@@ -257,8 +257,8 @@ config:
   labels: {}
 
   # Feature Gates
-#  featureGates:
-#    DisableJWTProviderComputation: true
+  featureGates:
+    disable-jwt-provider-computation: false
 
   listener:
     type: "tcp" # one of: tcp, unix

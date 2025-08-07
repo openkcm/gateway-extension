@@ -11,7 +11,6 @@ require (
 	github.com/samber/oops v1.19.0
 	github.com/stretchr/testify v1.10.0
 	github.com/veqryn/slog-context v0.8.0
-	google.golang.org/grpc v1.74.2
 	google.golang.org/protobuf v1.36.6
 	k8s.io/apimachinery v0.34.0-beta.0
 	k8s.io/utils v0.0.0-20250604170112-4c0f3b243397
@@ -100,6 +99,7 @@ require (
 	golang.org/x/text v0.26.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250603155806-513f23925822 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250603155806-513f23925822 // indirect
+	google.golang.org/grpc v1.74.2 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/api v0.33.0 // indirect
