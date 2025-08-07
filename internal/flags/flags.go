@@ -1,5 +1,5 @@
 package flags
 
 const (
-	DisableJWTProviderComputation = "DisableJWTProviderComputation"
+	DisableJWTProviderComputation = "disable-jwt-provider-computation"
 )

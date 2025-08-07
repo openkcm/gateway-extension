@@ -3,6 +3,7 @@ package extensions
 import (
 	"context"
 
+	"github.com/openkcm/gateway-extension/internal/flags"
 	"google.golang.org/protobuf/types/known/anypb"
 
 	egv1a1 "github.com/envoyproxy/gateway/api/v1alpha1"
@@ -16,6 +17,13 @@ func (s *GatewayExtension) VirtualHostModifyRoutes(ctx context.Context, routes [
 		slogctx.Info(ctx, "Updated VirtualHost Route", "name", r.GetName())
 
 		filterCfg := r.GetTypedPerFilterConfig()
+		// Do nothing if the feature gate is set making empty the jwt providers
+		if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
+			slogctx.Warn(ctx, "Skipping JWTProvider as is disabled through flags", "name", r.GetName())
+			r.TypedPerFilterConfig = make(map[string]*anypb.Any)
+			return nil
+		}
+
 		if _, ok := filterCfg[egv1a1.EnvoyFilterJWTAuthn.String()]; !ok {
 			routeCfgProto := &jwtauthnv3.PerRouteConfig{
 				RequirementSpecifier: &jwtauthnv3.PerRouteConfig_RequirementName{RequirementName: JwtAuthSecureMappingName},

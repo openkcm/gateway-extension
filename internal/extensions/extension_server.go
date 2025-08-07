@@ -12,7 +12,6 @@ import (
 
 	"github.com/openkcm/gateway-extension/api"
 	gev1a1 "github.com/openkcm/gateway-extension/api/v1alpha1"
-	"github.com/openkcm/gateway-extension/internal/flags"
 )
 
 type GatewayExtension struct {
@@ -67,11 +66,6 @@ func (s *GatewayExtension) PostHTTPListenerModify(ctx context.Context, req *pb.P
 
 		switch generic.Kind {
 		case api.JWTProviderKind:
-			// Do nothing if the feature gate is set
-			if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
-				continue
-			}
-
 			switch generic.APIVersion {
 			case api.JWTProviderV1Alpha1:
 				{
@@ -99,11 +93,6 @@ func (s *GatewayExtension) PostHTTPListenerModify(ctx context.Context, req *pb.P
 	for key, ext := range resources {
 		switch key {
 		case api.JWTProviderKind:
-			// Do nothing if the feature gate is set
-			if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
-				continue
-			}
-
 			err := s.ProcessJWTProviders(ctx, req.GetListener(), ext)
 			if err != nil {
 				return nil, err
@@ -128,10 +117,6 @@ func (s *GatewayExtension) PostTranslateModify(ctx context.Context, req *pb.Post
 	resp := &pb.PostTranslateModifyResponse{
 		Clusters: req.GetClusters(),
 		Secrets:  req.GetSecrets(),
-	}
-	// Return response with same data if the feature gate is set
-	if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
-		return resp, nil
 	}
 
 	slogctx.Info(ctx, "Calling ...")
@@ -159,11 +144,6 @@ func (s *GatewayExtension) PostVirtualHostModify(ctx context.Context, req *pb.Po
 
 	resp := &pb.PostVirtualHostModifyResponse{
 		VirtualHost: req.GetVirtualHost(),
-	}
-
-	// Return response with same data if the feature gate is set
-	if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
-		return resp, nil
 	}
 
 	if req.GetVirtualHost() == nil {

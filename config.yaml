@@ -3,7 +3,7 @@ application:
   environment: development
 
 featureGates:
-  DisableJWTProviderComputation: true
+  disable-jwt-provider-computation: true
 
 listener:
   type: "tcp" # one of: tcp, unix

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/openkcm/gateway-extension/internal/flags"
 	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/durationpb"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -49,6 +50,11 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 	for _, resource := range resources {
 		jwtp, ok := resource.(*v1alpha1.JWTProvider)
 		if !ok {
+			continue
+		}
+		// Do nothing if the feature gate is set making empty the jwt providers
+		if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
+			slogctx.Warn(ctx, "Skipping JWTProvider as is disabled through flags", "name", jwtp.GetName())
 			continue
 		}
 

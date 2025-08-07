@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/envoyproxy/go-control-plane/pkg/wellknown"
+	"github.com/openkcm/gateway-extension/internal/flags"
 	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/durationpb"
 
@@ -14,15 +15,7 @@ import (
 	slogctx "github.com/veqryn/slog-context"
 )
 
-func (s *GatewayExtension) TranslateModifyClusters(ctx context.Context, cls []*clusterv3.Cluster) ([]*clusterv3.Cluster, error) {
-	s.jwtAuthClustersMu.RLock()
-	defer s.jwtAuthClustersMu.RUnlock()
-
-	if len(s.jwtAuthClusters) == 0 {
-		slogctx.Info(ctx, "No updates on the cached clusters; Continue skip updates of clusters configuration.")
-		return cls, nil
-	}
-
+func cleanUpClusters(cls []*clusterv3.Cluster) []*clusterv3.Cluster {
 	clusters := make([]*clusterv3.Cluster, 0)
 
 	// remove clusters that has as suffix name `openkcm`,
@@ -33,6 +26,26 @@ func (s *GatewayExtension) TranslateModifyClusters(ctx context.Context, cls []*c
 
 		clusters = append(clusters, c)
 	}
+	return clusters
+}
+
+func (s *GatewayExtension) TranslateModifyClusters(ctx context.Context, cls []*clusterv3.Cluster) ([]*clusterv3.Cluster, error) {
+	s.jwtAuthClustersMu.RLock()
+	defer s.jwtAuthClustersMu.RUnlock()
+
+	// Return response with same data if the feature gate is set
+	if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
+		slogctx.Warn(ctx, "Skipping updating the clusters as is disabled through flags")
+		return cleanUpClusters(cls), nil
+	}
+
+	if len(s.jwtAuthClusters) == 0 {
+		slogctx.Info(ctx, "No updates on the cached clusters; Continue skip updates of clusters configuration.")
+		return cls, nil
+	}
+
+	// remove clusters that has as suffix name `openkcm`,
+	clusters := cleanUpClusters(cls)
 
 	// will be added new list of the clusters with the suffix name `openkcm`
 	for _, v := range s.jwtAuthClusters {
