@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/openkcm/gateway-extension/compare/v0.3.1...v0.3.2) (2025-08-07)
+
+
+### Bug Fixes
+
+* make corrections on the feature flags values, as viper is lowercasing all map keys as value ([#60](https://github.com/openkcm/gateway-extension/issues/60)) ([ba3eff8](https://github.com/openkcm/gateway-extension/commit/ba3eff8e98a9c5b5e8bd0f00f666153b164940dd))
+
 ## [0.3.1](https://github.com/openkcm/gateway-extension/compare/v0.3.0...v0.3.1) (2025-08-02)
 
 
