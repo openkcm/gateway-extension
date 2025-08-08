@@ -44,7 +44,7 @@ func (s *GatewayExtension) PostRouteModify(ctx context.Context, req *pb.PostRout
 
 	slogctx.Info(ctx, "Do nothing ...")
 	return &pb.PostRouteModifyResponse{
-		Route: req.Route,
+		Route: req.GetRoute(),
 	}, nil
 }
 
@@ -57,7 +57,7 @@ func (s *GatewayExtension) PostClusterModify(ctx context.Context, req *pb.PostCl
 
 	slogctx.Info(ctx, "Do nothing ...")
 	return &pb.PostClusterModifyResponse{
-		Cluster: req.Cluster,
+		Cluster: req.GetCluster(),
 	}, nil
 }
 
