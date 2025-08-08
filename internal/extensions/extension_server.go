@@ -14,6 +14,10 @@ import (
 	gev1a1 "github.com/openkcm/gateway-extension/api/v1alpha1"
 )
 
+const (
+	logXdsGroup = "envoy-xds-hook"
+)
+
 type GatewayExtension struct {
 	pb.UnimplementedEnvoyGatewayExtensionServer
 
@@ -40,7 +44,7 @@ func NewGatewayExtension(features *commoncfg.FeatureGates) *GatewayExtension {
 // PostRouteModify will only be executed if an extension is loaded and only on Routes which were generated from an HTTPRoute
 // that uses extension resources as externalRef filters.
 func (s *GatewayExtension) PostRouteModify(ctx context.Context, req *pb.PostRouteModifyRequest) (*pb.PostRouteModifyResponse, error) {
-	ctx = slogctx.With(ctx, "envoy-xds-hook", "PostRouteModify")
+	ctx = slogctx.With(ctx, logXdsGroup, "PostRouteModify")
 
 	slogctx.Info(ctx, "Do nothing ...")
 	return &pb.PostRouteModifyResponse{
@@ -53,7 +57,7 @@ func (s *GatewayExtension) PostRouteModify(ctx context.Context, req *pb.PostRout
 // control cluster naming and basic configuration. This hook is called when custom backend resources are used
 // in HTTPRoute or GRPCRoute backendRefs.
 func (s *GatewayExtension) PostClusterModify(ctx context.Context, req *pb.PostClusterModifyRequest) (*pb.PostClusterModifyResponse, error) {
-	ctx = slogctx.With(ctx, "envoy-xds-hook", "PostClusterModify")
+	ctx = slogctx.With(ctx, logXdsGroup, "PostClusterModify")
 
 	slogctx.Info(ctx, "Do nothing ...")
 	return &pb.PostClusterModifyResponse{
@@ -65,7 +69,7 @@ func (s *GatewayExtension) PostClusterModify(ctx context.Context, req *pb.PostCl
 // PostHTTPListenerModify is always executed when an extension is loaded. An extension may return nil
 // in order to not make any changes to it.
 func (s *GatewayExtension) PostHTTPListenerModify(ctx context.Context, req *pb.PostHTTPListenerModifyRequest) (*pb.PostHTTPListenerModifyResponse, error) {
-	ctx = slogctx.With(ctx, "envoy-xds-hook", "PostHTTPListenerModify")
+	ctx = slogctx.With(ctx, logXdsGroup, "PostHTTPListenerModify")
 
 	slogctx.Info(ctx, "Calling ...")
 
@@ -142,7 +146,7 @@ func (s *GatewayExtension) PostHTTPListenerModify(ctx context.Context, req *pb.P
 // The list of clusters and secrets returned by the extension are used as the final list of all clusters and secrets
 // PostTranslateModify is always executed when an extension is loaded
 func (s *GatewayExtension) PostTranslateModify(ctx context.Context, req *pb.PostTranslateModifyRequest) (*pb.PostTranslateModifyResponse, error) {
-	ctx = slogctx.With(ctx, "envoy-xds-hook", "PostTranslateModify")
+	ctx = slogctx.With(ctx, logXdsGroup, "PostTranslateModify")
 
 	resp := &pb.PostTranslateModifyResponse{
 		Clusters: req.GetClusters(),
@@ -168,7 +172,7 @@ func (s *GatewayExtension) PostTranslateModify(ctx context.Context, req *pb.Post
 // PostVirtualHostModify is always executed when an extension is loaded. An extension may return nil to not make any changes
 // to it.
 func (s *GatewayExtension) PostVirtualHostModify(ctx context.Context, req *pb.PostVirtualHostModifyRequest) (*pb.PostVirtualHostModifyResponse, error) {
-	ctx = slogctx.With(ctx, "envoy-xds-hook", "PostVirtualHostModify")
+	ctx = slogctx.With(ctx, logXdsGroup, "PostVirtualHostModify")
 
 	slogctx.Info(ctx, "Calling ...")
 
