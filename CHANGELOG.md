@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/openkcm/gateway-extension/compare/v0.3.2...v0.4.0) (2025-08-08)
+
+
+### Features
+
+* upgrade the gateway version 1.5.0 ([#64](https://github.com/openkcm/gateway-extension/issues/64)) ([948dbd5](https://github.com/openkcm/gateway-extension/commit/948dbd5e2c030888d045751f28b99ca33d46baaf))
+
 ## [0.3.2](https://github.com/openkcm/gateway-extension/compare/v0.3.1...v0.3.2) (2025-08-07)
 
 
