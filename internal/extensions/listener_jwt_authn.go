@@ -226,9 +226,7 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 		}
 
 		var anyFilterConfig *anypb.Any
-		if len(reqMap) == 0 {
-			jwtAuthFilter = nil
-		} else {
+		if len(reqMap) > 0 {
 			anyFilterConfig, err = anypb.New(jwtAuthFilter)
 			if err != nil {
 				slogctx.Error(ctx, "Failed to unmarshal the existing jwtAuthFilter filter.", "error", err)
