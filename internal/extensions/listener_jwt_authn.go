@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	JwtAuthSecureMappingName = "jwt_auth_secure"
+	JwtAuthSecureMappingName = "jwt_auth_secure_openkcm"
 )
 
 // ProcessJWTProviders is called after Envoy Gateway is done generating a

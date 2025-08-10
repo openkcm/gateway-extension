@@ -88,7 +88,7 @@ func TestGatewayExtension_PostHTTPListenerModify(t *testing.T) {
 															},
 														},
 														RequirementMap: map[string]*jwtauth3.JwtRequirement{
-															"jwt_auth_secure": {
+															JwtAuthSecureMappingName: {
 																RequiresType: &jwtauth3.JwtRequirement_ProviderName{
 																	ProviderName: "Provider",
 																},
@@ -176,7 +176,7 @@ func TestGatewayExtension_PostHTTPListenerModify(t *testing.T) {
 															},
 														},
 														RequirementMap: map[string]*jwtauth3.JwtRequirement{
-															"jwt_auth_secure": {
+															JwtAuthSecureMappingName: {
 																RequiresType: &jwtauth3.JwtRequirement_ProviderName{
 																	ProviderName: "Provider",
 																},
@@ -284,7 +284,7 @@ func TestGatewayExtension_PostHTTPListenerModify_WellKnown(t *testing.T) {
 															},
 														},
 														RequirementMap: map[string]*jwtauth3.JwtRequirement{
-															"jwt_auth_secure": {
+															JwtAuthSecureMappingName: {
 																RequiresType: &jwtauth3.JwtRequirement_ProviderName{
 																	ProviderName: "Provider",
 																},
@@ -361,7 +361,7 @@ func TestGatewayExtension_PostHTTPListenerModify_WellKnown(t *testing.T) {
 															},
 														},
 														RequirementMap: map[string]*jwtauth3.JwtRequirement{
-															"jwt_auth_secure": {
+															JwtAuthSecureMappingName: {
 																RequiresType: &jwtauth3.JwtRequirement_ProviderName{
 																	ProviderName: "Well Known",
 																},
