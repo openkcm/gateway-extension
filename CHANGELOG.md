@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/openkcm/gateway-extension/compare/v0.4.1...v0.4.2) (2025-08-10)
+
+
+### Bug Fixes
+
+* remove only the PerRouteConfig having internal giving name not others! ([#68](https://github.com/openkcm/gateway-extension/issues/68)) ([7b8858a](https://github.com/openkcm/gateway-extension/commit/7b8858a46c0bc6b86a29921b8a9ba0d462654d13))
+
 ## [0.4.1](https://github.com/openkcm/gateway-extension/compare/v0.4.0...v0.4.1) (2025-08-10)
 
 
