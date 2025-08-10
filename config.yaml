@@ -4,6 +4,7 @@ application:
 
 featureGates:
   disable-jwt-provider-computation: true
+  enable-allow-missing-jwt-authentication-envoy: false
 
 listener:
   type: "tcp" # one of: tcp, unix

@@ -165,10 +165,12 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 
 	switch len(reqs) {
 	case 0:
-		jwtRequirement = &jwtauth3.JwtRequirement{
-			RequiresType: &jwtauth3.JwtRequirement_AllowMissingOrFailed{
-				AllowMissingOrFailed: &emptypb.Empty{},
-			},
+		if s.features.IsFeatureEnabled(flags.EnableAllowMissingJwtAuthenticationEnvoy) {
+			jwtRequirement = &jwtauth3.JwtRequirement{
+				RequiresType: &jwtauth3.JwtRequirement_AllowMissingOrFailed{
+					AllowMissingOrFailed: &emptypb.Empty{},
+				},
+			}
 		}
 	case 1:
 		jwtRequirement = reqs[0]
@@ -182,7 +184,9 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 		}
 	}
 
-	reqMap[JwtAuthSecureMappingName] = jwtRequirement
+	if jwtRequirement != nil {
+		reqMap[JwtAuthSecureMappingName] = jwtRequirement
+	}
 
 	// First, get the filter chains from the listener
 	filterChains := listener.GetFilterChains()
@@ -220,21 +224,36 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 			jwtAuthFilter.Providers = providers
 			jwtAuthFilter.RequirementMap = reqMap
 		}
+
+		var anyFilterConfig *anypb.Any
+		if len(reqMap) > 0 {
+			anyFilterConfig, err = anypb.New(jwtAuthFilter)
+			if err != nil {
+				slogctx.Error(ctx, "Failed to unmarshal the existing jwtAuthFilter filter.", "error", err)
+				return err
+			}
+		}
+
 		// Add or update the Jwt Authentication filter in the HCM
-		anyFilterConfig, _ := anypb.New(jwtAuthFilter)
 		if baIndex > -1 {
-			httpConManager.HttpFilters[baIndex].ConfigType = &hcm.HttpFilter_TypedConfig{
-				TypedConfig: anyFilterConfig,
+			if anyFilterConfig == nil {
+				httpConManager.HttpFilters[baIndex] = nil
+			} else {
+				httpConManager.HttpFilters[baIndex].ConfigType = &hcm.HttpFilter_TypedConfig{
+					TypedConfig: anyFilterConfig,
+				}
 			}
 		} else {
-			filters := []*hcm.HttpFilter{
-				{
+			filters := make([]*hcm.HttpFilter, 0)
+			if anyFilterConfig != nil {
+				filters = append(filters, &hcm.HttpFilter{
 					Name: egv1a1.EnvoyFilterJWTAuthn.String(),
 					ConfigType: &hcm.HttpFilter_TypedConfig{
 						TypedConfig: anyFilterConfig,
 					},
-				},
+				})
 			}
+
 			filters = append(filters, httpConManager.GetHttpFilters()...)
 			httpConManager.HttpFilters = filters
 		}
