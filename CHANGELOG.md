@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/openkcm/gateway-extension/compare/v0.4.0...v0.4.1) (2025-08-10)
+
+
+### Bug Fixes
+
+* introduce a flag to explicitly enable the JWT Authentication envoy configuration when there a no JWT providers ([#66](https://github.com/openkcm/gateway-extension/issues/66)) ([d1130c6](https://github.com/openkcm/gateway-extension/commit/d1130c600da636627ec62e2571194e7e5c9eeab8))
+
 ## [0.4.0](https://github.com/openkcm/gateway-extension/compare/v0.3.2...v0.4.0) (2025-08-08)
 
 
