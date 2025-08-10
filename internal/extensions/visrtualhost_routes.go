@@ -16,14 +16,17 @@ import (
 func (s *GatewayExtension) VirtualHostModifyRoutes(ctx context.Context, routes []*routev3.Route) error {
 	for _, r := range routes {
 		slogctx.Info(ctx, "Updated VirtualHost Route", "name", r.GetName())
+		cleanupRoute(ctx, r, JwtAuthSecureMappingName)
 
 		filterCfg := r.GetTypedPerFilterConfig()
 		// Do nothing if the feature gate is set making empty the jwt providers
 		if s.features.IsFeatureEnabled(flags.DisableJWTProviderComputation) {
 			slogctx.Warn(ctx, "Skipping JWTProvider as is disabled through flags", "name", r.GetName())
-			r.TypedPerFilterConfig = make(map[string]*anypb.Any)
-
 			return nil
+		}
+
+		if filterCfg == nil {
+			r.TypedPerFilterConfig = make(map[string]*anypb.Any)
 		}
 
 		if _, ok := filterCfg[egv1a1.EnvoyFilterJWTAuthn.String()]; !ok {
@@ -36,13 +39,30 @@ func (s *GatewayExtension) VirtualHostModifyRoutes(ctx context.Context, routes [
 				return err
 			}
 
-			if filterCfg == nil {
-				r.TypedPerFilterConfig = make(map[string]*anypb.Any)
-			}
-
 			r.TypedPerFilterConfig[egv1a1.EnvoyFilterJWTAuthn.String()] = routeCfgAny
 		}
 	}
 
 	return nil
+}
+
+func cleanupRoute(ctx context.Context, r *routev3.Route, name string) {
+	resources := r.GetTypedPerFilterConfig()
+	for key, cfg := range resources {
+		if cfg == nil {
+			continue
+		}
+
+		perRouteConfig := new(jwtauthnv3.PerRouteConfig)
+
+		err := cfg.UnmarshalTo(perRouteConfig)
+		if err != nil {
+			slogctx.Warn(ctx, "Failed to unmarshal PerRouteConfig", "error", err)
+			continue
+		}
+
+		if name == perRouteConfig.GetRequirementName() {
+			delete(resources, key)
+		}
+	}
 }
