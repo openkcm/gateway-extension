@@ -9,7 +9,7 @@ require (
 	github.com/google/go-cmp v0.7.0
 	github.com/openkcm/common-sdk v1.1.1
 	github.com/samber/oops v1.19.0
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	github.com/veqryn/slog-context v0.8.0
 	google.golang.org/protobuf v1.36.7
 	k8s.io/apimachinery v0.35.0-alpha.0
