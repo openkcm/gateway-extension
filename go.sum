@@ -16,8 +16,8 @@ github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davidhoo/jsonpath v1.0.4 h1:f31VxArp5bWUV4wbuYI4KsnVpirMq57B5PnDQId4giI=
 github.com/davidhoo/jsonpath v1.0.4/go.mod h1:QUzoZq6f3h3XtLXPCCgapLAQMNuwGCCMwfKiTAf8e5s=
-github.com/envoyproxy/gateway v1.5.0 h1:wfHytSeNoinwu0vCtWT61XK23qJuRmJyU+CPWdIJp2I=
-github.com/envoyproxy/gateway v1.5.0/go.mod h1:jgU4J61wGBqPWzTW14otfLXoSU82qo75xz6CUVLILVc=
+github.com/envoyproxy/gateway v1.5.1 h1:sOIcYJqu0d02H7RX/rmM3Z4yk0w8HUlo6z3A4Q8oP28=
+github.com/envoyproxy/gateway v1.5.1/go.mod h1:a1Q2c/Ab61TQ4xUSS2E5wWL7Xx+HRTxEA0yqPaqUWWI=
 github.com/envoyproxy/go-control-plane v0.13.5-0.20250622153809-434b6986176d h1:zRd3ucqzZ2stiYb7j8+RBP48kFcFLUkDsjbr0hZg1/E=
 github.com/envoyproxy/go-control-plane v0.13.5-0.20250622153809-434b6986176d/go.mod h1:whHrEUXbTAzBJlzd3Gz4us5zEFP1gL6o3LbfA+a/xbg=
 github.com/envoyproxy/go-control-plane/envoy v1.32.5-0.20250622153809-434b6986176d h1:mbxMT8XP3hEorIeTp4Yvcz5qKzE2n2q4IMU3SxuikaQ=
