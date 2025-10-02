@@ -8,7 +8,7 @@ require (
 	github.com/envoyproxy/go-control-plane/envoy v1.32.5-0.20250622153809-434b6986176d
 	github.com/google/go-cmp v0.7.0
 	github.com/openkcm/common-sdk v1.4.0
-	github.com/samber/oops v1.19.0
+	github.com/samber/oops v1.19.3
 	github.com/stretchr/testify v1.11.1
 	github.com/veqryn/slog-context v0.8.0
 	google.golang.org/protobuf v1.36.9
