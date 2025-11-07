@@ -5,4 +5,6 @@
 
 // +kubebuilder:object:generate=true
 // +groupName=gateway.extensions.envoyproxy.io
+//
+//nolint:godoclint
 package v1alpha1

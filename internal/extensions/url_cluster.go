@@ -16,10 +16,12 @@ const (
 type EndpointType int
 
 const (
-	customSuffixName = "openkcm"
-
 	EndpointTypeDNS EndpointType = iota
 	EndpointTypeStatic
+)
+
+const (
+	customSuffixName = "openkcm"
 )
 
 // urlCluster is a cluster that is created from a URL.

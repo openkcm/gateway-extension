@@ -61,8 +61,9 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 		slogctx.Info(ctx, "Processing JWTProvider", "name", jwtp.Name)
 		slogctx.Debug(ctx, "Details on hte JWTProvider", "resource", jwtp)
 
-		jwksTimeoutSec := int64(2)
-		jwksCacheDuration := int64(5 * 60)
+		jwksTimeoutSec := int64(2)             // 2 seconds
+		jwksCacheDurationSec := int64(10 * 60) // 600 seconds
+		jwksFailedRefetchSec := int64(5)       // 5 seconds
 
 		var jwksUri string
 		if jwtp.Spec.RemoteJwks != nil {
@@ -73,7 +74,7 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 			}
 
 			if jwtp.Spec.RemoteJwks.CacheDuration > 0 {
-				jwksCacheDuration = jwtp.Spec.RemoteJwks.CacheDuration
+				jwksCacheDurationSec = jwtp.Spec.RemoteJwks.CacheDuration
 			}
 		} else {
 			uri, err := extractJWKSFromWellKnownOpenIDConfiguration(ctx, jwtp.Spec.Issuer)
@@ -104,8 +105,11 @@ func (s *GatewayExtension) ProcessJWTProviders(ctx context.Context, listener *li
 				},
 				Timeout: &durationpb.Duration{Seconds: jwksTimeoutSec},
 			},
-			CacheDuration: &durationpb.Duration{Seconds: jwksCacheDuration},
-			AsyncFetch:    &jwtauth3.JwksAsyncFetch{},
+			CacheDuration: &durationpb.Duration{Seconds: jwksCacheDurationSec},
+			AsyncFetch: &jwtauth3.JwksAsyncFetch{
+				FastListener:          true,
+				FailedRefetchDuration: &durationpb.Duration{Seconds: jwksFailedRefetchSec},
+			},
 		}
 		// Set the retry policy if it exists.
 		if jwtp.Spec.RemoteJwks != nil && jwtp.Spec.RemoteJwks.Retry != nil {
