@@ -57,7 +57,7 @@ func cleanupRoute(ctx context.Context, r *routev3.Route, name string) {
 
 		err := cfg.UnmarshalTo(perRouteConfig)
 		if err != nil {
-			slogctx.Warn(ctx, "Failed to unmarshal PerRouteConfig", "error", err)
+			slogctx.Debug(ctx, "Failed to unmarshal into PerRouteConfig", "source_resource", cfg.String())
 			continue
 		}
 
