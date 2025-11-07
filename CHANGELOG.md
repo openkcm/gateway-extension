@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.3](https://github.com/openkcm/gateway-extension/compare/v0.4.2...v0.4.3) (2025-11-07)
+
+
+### Bug Fixes
+
+* inject the buildinfo at build time using ldflags ([#83](https://github.com/openkcm/gateway-extension/issues/83)) ([807e9d3](https://github.com/openkcm/gateway-extension/commit/807e9d3a56b0409d6d12ea950a67245c6e592ddb))
+* modify some logs and include some defaults for jwt listeners fetching; dependency updates ([#96](https://github.com/openkcm/gateway-extension/issues/96)) ([835e890](https://github.com/openkcm/gateway-extension/commit/835e890d2c07a8eda1dbb8e3969121e35b1bedea))
+
 ## [0.4.2](https://github.com/openkcm/gateway-extension/compare/v0.4.1...v0.4.2) (2025-08-10)
 
 
