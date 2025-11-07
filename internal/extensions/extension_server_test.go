@@ -152,8 +152,11 @@ func TestGatewayExtension_PostHTTPListenerModify(t *testing.T) {
 																			HttpUpstreamType: &corev3.HttpUri_Cluster{Cluster: "example_com_443|openkcm"},
 																			Timeout:          durationpb.New(2 * time.Second),
 																		},
-																		AsyncFetch:    &jwtauth3.JwksAsyncFetch{},
-																		CacheDuration: durationpb.New(300 * time.Second),
+																		AsyncFetch: &jwtauth3.JwksAsyncFetch{
+																			FastListener:          true,
+																			FailedRefetchDuration: &durationpb.Duration{Seconds: 5},
+																		},
+																		CacheDuration: durationpb.New(600 * time.Second),
 																		RetryPolicy: &corev3.RetryPolicy{
 																			RetryBackOff: &corev3.BackoffStrategy{
 																				BaseInterval: durationpb.New(1 * time.Second),
@@ -348,8 +351,11 @@ func TestGatewayExtension_PostHTTPListenerModify_WellKnown(t *testing.T) {
 																			HttpUpstreamType: &corev3.HttpUri_Cluster{Cluster: "www_localhost_80|openkcm"},
 																			Timeout:          durationpb.New(2 * time.Second),
 																		},
-																		AsyncFetch:    &jwtauth3.JwksAsyncFetch{},
-																		CacheDuration: durationpb.New(300 * time.Second),
+																		AsyncFetch: &jwtauth3.JwksAsyncFetch{
+																			FastListener:          true,
+																			FailedRefetchDuration: &durationpb.Duration{Seconds: 5},
+																		},
+																		CacheDuration: durationpb.New(600 * time.Second),
 																	},
 																},
 																Forward:                    true,
