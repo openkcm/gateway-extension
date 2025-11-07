@@ -15,6 +15,8 @@ import (
 // +kubebuilder:resource:path=jwtproviders
 //
 // JWTProvider provides an example extension policy context resource.
+//
+//nolint:godoclint
 type JWTProvider struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -110,6 +112,8 @@ type JWTProviderSpec struct {
 // +kubebuilder:object:root=true
 //
 // JWTProviderList contains a list of ListenerContext resources.
+//
+//nolint:godoclint
 type JWTProviderList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
