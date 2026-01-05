@@ -4,7 +4,7 @@ go 1.25.4
 
 require (
 	github.com/envoyproxy/gateway v1.5.4
-	github.com/envoyproxy/go-control-plane v0.13.5-0.20250622153809-434b6986176d
+	github.com/envoyproxy/go-control-plane v0.14.0
 	github.com/envoyproxy/go-control-plane/envoy v1.36.0
 	github.com/google/go-cmp v0.7.0
 	github.com/openkcm/common-sdk v1.5.2
