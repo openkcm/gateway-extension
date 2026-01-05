@@ -11,7 +11,7 @@ require (
 	github.com/samber/oops v1.19.3
 	github.com/stretchr/testify v1.11.1
 	github.com/veqryn/slog-context v0.8.0
-	google.golang.org/protobuf v1.36.10
+	google.golang.org/protobuf v1.36.11
 	k8s.io/apimachinery v0.36.0-alpha.0
 	k8s.io/utils v0.0.0-20251002143259-bc988d571ff4
 	sigs.k8s.io/controller-runtime v0.22.4
