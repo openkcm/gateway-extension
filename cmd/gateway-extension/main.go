@@ -37,7 +37,7 @@ var (
 //   - Start the business logic and eventually return the error from it
 func run(ctx context.Context) error {
 	// Load Configuration
-	defaultValues := map[string]interface{}{}
+	defaultValues := map[string]any{}
 	cfg := &config.Config{}
 
 	err := commoncfg.LoadConfig[*config.Config](cfg,
@@ -79,14 +79,14 @@ func run(ctx context.Context) error {
 			),
 		)
 
-		healthOptions := make([]health.Option, 0)
-		healthOptions = append(healthOptions,
+		//nolint:prealloc
+		healthOptions := []health.Option{
 			health.WithDisabledAutostart(),
-			health.WithTimeout(5*time.Second),
+			health.WithTimeout(5 * time.Second),
 			health.WithStatusListener(func(ctx context.Context, state health.State) {
 				slogctx.Info(ctx, "readiness status changed", "status", state.Status)
 			}),
-		)
+		}
 
 		switch cfg.Listener.Type {
 		case config.UNIXListener:
