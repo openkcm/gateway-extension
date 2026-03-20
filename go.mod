@@ -1,9 +1,9 @@
 module github.com/openkcm/gateway-extension
 
-go 1.25.6
+go 1.25.8
 
 require (
-	github.com/envoyproxy/gateway v1.7.0
+	github.com/envoyproxy/gateway v1.7.1
 	github.com/envoyproxy/go-control-plane v0.14.0
 	github.com/envoyproxy/go-control-plane/envoy v1.37.0
 	github.com/google/go-cmp v0.7.0
@@ -15,7 +15,7 @@ require (
 	k8s.io/apimachinery v0.36.0-alpha.2
 	k8s.io/utils v0.0.0-20260210185600-b8788abfbbc2
 	sigs.k8s.io/controller-runtime v0.23.3
-	sigs.k8s.io/gateway-api v1.5.0
+	sigs.k8s.io/gateway-api v1.5.1
 )
 
 require (
