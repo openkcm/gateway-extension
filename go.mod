@@ -3,7 +3,7 @@ module github.com/openkcm/gateway-extension
 go 1.26.0
 
 require (
-	github.com/envoyproxy/gateway v1.7.1
+	github.com/envoyproxy/gateway v1.7.2
 	github.com/envoyproxy/go-control-plane v0.14.0
 	github.com/envoyproxy/go-control-plane/envoy v1.37.0
 	github.com/google/go-cmp v0.7.0
